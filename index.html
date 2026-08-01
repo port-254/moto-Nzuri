@@ -6,38 +6,20 @@
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; frame-src 'none';">
   <title>🔥 Moto Nzuri · Field Operations</title>
   <style>
-    /* ── RESET & GLOBAL FIRE THEME ── */
     * { margin:0; padding:0; box-sizing:border-box; }
     :root {
-      --bg: #0b0a09;
-      --surface: #1a1613;
-      --surface-light: #241e1a;
-      --text: #f5e6d3;
-      --text-dim: #b8a38b;
-      --accent: #ff8c00;
-      --accent-glow: #ff4500;
-      --flame: #ffb347;
-      --success: #2ecc71;
-      --danger: #e74c3c;
-      --border: #3a2e24;
-      --border-active: #ff8c00;
-      --shadow: 0 4px 12px rgba(255,69,0,0.2);
-      --radius: 10px;
-      --transition: 0.2s ease;
+      --bg: #0b0a09; --surface: #1a1613; --surface-light: #241e1a;
+      --text: #f5e6d3; --text-dim: #b8a38b; --accent: #ff8c00;
+      --accent-glow: #ff4500; --flame: #ffb347; --success: #2ecc71;
+      --danger: #e74c3c; --border: #3a2e24; --border-active: #ff8c00;
+      --shadow: 0 4px 12px rgba(255,69,0,0.2); --radius: 10px; --transition: 0.2s ease;
     }
     body {
-      font-family: 'Segoe UI', system-ui, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text);
+      min-height: 100vh; display: flex; align-items: center; justify-content: center;
       background-image: radial-gradient(circle at 20% 10%, rgba(255,69,0,0.12) 0%, transparent 50%);
     }
     #app-container { width:100%; max-width:1300px; margin:10px auto; padding:15px; }
-
-    /* ── TYPOGRAPHY ── */
     .logo { display:flex; align-items:center; gap:10px; font-size:1.8rem; font-weight:700; }
     .logo span { background: linear-gradient(135deg, #ff8c00, #ff4500); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
     h1,h2,h3 { font-weight:600; color:var(--flame); text-shadow:0 0 8px rgba(255,140,0,0.4); }
@@ -47,15 +29,14 @@
       transition: all var(--transition); display:inline-flex; align-items:center; gap:6px;
       font-size:0.9rem; letter-spacing:0.3px;
     }
-    button:hover, .btn:hover { border-color:var(--accent); box-shadow:0 0 15px rgba(255,140,0,0.5); background:#2a211c; }
+    button:hover, .btn:hover { border-color:var(--accent); box-shadow:0 0 15px rgba(255,140,0,0.5); background:#2a211c; color:#fff; }
     button.accent { background: linear-gradient(145deg, #ff8c00, #e67600); border:none; color:#0c0b0a; font-weight:700; box-shadow:0 4px 15px rgba(255,69,0,0.6); }
     button.accent:hover { background: linear-gradient(145deg, #ff9f2e, #ff5e00); }
     button.danger { border-color:var(--danger); color:var(--danger); background:rgba(231,76,60,0.1); }
     button.danger:hover { background:var(--danger); color:#fff; }
     input, select, textarea {
       background:var(--surface); border:1px solid var(--border); padding:12px 15px;
-      border-radius:25px; color:var(--text); font-size:0.95rem; width:100%; outline:none;
-      transition:var(--transition);
+      border-radius:25px; color:var(--text); font-size:0.95rem; width:100%; outline:none; transition:var(--transition);
     }
     input:focus, textarea:focus, select:focus { border-color:var(--accent); box-shadow:0 0 10px rgba(255,140,0,0.4); }
     .card { background:var(--surface); border:1px solid var(--border); border-radius:20px; padding:20px; margin-bottom:20px; box-shadow:0 8px 20px rgba(0,0,0,0.5); }
@@ -67,599 +48,359 @@
     .badge { display:inline-block; padding:4px 12px; border-radius:15px; font-size:0.75rem; font-weight:700; }
     .badge-success { background:rgba(46,204,113,0.2); color:#2ecc71; border:1px solid #2ecc71; }
     .badge-warning { background:rgba(255,140,0,0.2); color:#ff8c00; border:1px solid #ff8c00; }
-    .badge-danger { background:rgba(231,76,60,0.2); color:#e74c3c; border:1px solid #e74c3c; }
+    .map-link { color:var(--accent); text-decoration:underline; cursor:pointer; }
     .flex-row { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
     .mt-2 { margin-top:15px; } .mb-2 { margin-bottom:15px; }
     .hidden { display:none !important; }
-    .modal {
-      position:fixed; top:0; left:0; width:100%; height:100%;
-      background:rgba(0,0,0,0.85); display:flex; align-items:center; justify-content:center; z-index:1000;
-    }
-    .modal-content {
-      background:var(--surface); border:1px solid var(--accent); border-radius:25px;
-      padding:25px; max-width:600px; width:90%; max-height:85vh; overflow-y:auto;
-      box-shadow:0 10px 30px rgba(255,69,0,0.5);
-    }
-    .toast {
-      position:fixed; bottom:20px; right:20px; background:#2c1e14;
-      border-left:4px solid var(--accent); color:var(--text); padding:12px 20px;
-      border-radius:30px; box-shadow:0 5px 15px black; z-index:2000;
-      animation: slideIn 0.3s ease;
-    }
-    @keyframes slideIn { from { transform:translateX(100px); opacity:0; } to { transform:translateX(0); opacity:1; } }
-    /* tabs */
+    .modal { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); display:flex; align-items:center; justify-content:center; z-index:1000; }
+    .modal-content { background:var(--surface); border:1px solid var(--accent); border-radius:25px; padding:25px; max-width:600px; width:90%; max-height:85vh; overflow-y:auto; box-shadow:0 10px 30px rgba(255,69,0,0.5); }
+    .toast { position:fixed; bottom:20px; right:20px; background:#2c1e14; border-left:4px solid var(--accent); color:var(--text); padding:12px 20px; border-radius:30px; box-shadow:0 5px 15px black; z-index:2000; animation: slideIn 0.3s ease; }
+    @keyframes slideIn { from{transform:translateX(100px);opacity:0;} to{transform:translateX(0);opacity:1;} }
     .nav-tabs { display:flex; gap:5px; border-bottom:1px solid var(--border); margin-bottom:20px; }
-    .nav-tab {
-      padding:10px 20px; border-radius:15px 15px 0 0; background:transparent; border:none;
-      color:var(--text-dim); font-weight:600; cursor:pointer;
-    }
+    .nav-tab { padding:10px 20px; border-radius:15px 15px 0 0; background:transparent; border:none; color:var(--text-dim); font-weight:600; cursor:pointer; }
     .nav-tab.active { background:var(--surface-light); color:var(--accent); border-bottom:2px solid var(--accent); text-shadow:0 0 5px var(--accent); }
-    @media print { body { background:white; color:black; } .no-print, .nav-tabs, button, .modal, .toast, #logout-btn { display:none!important; } .card { box-shadow:none; border:1px solid #ccc; } }
-    .map-link { color:var(--accent); text-decoration:underline; cursor:pointer; }
-    .history-entry { background:var(--surface-light); border-radius:10px; padding:10px; margin-bottom:8px; border-left:3px solid var(--accent); }
+    @media print { body{background:white;color:black;} .no-print,.nav-tabs,button,.modal,.toast,#logout-btn{display:none!important;} .card{box-shadow:none;border:1px solid #ccc;} }
   </style>
 </head>
 <body>
-<div id="app-container">
-  <div id="dynamic-root"></div>
-</div>
+<div id="app-container"><div id="dynamic-root"></div></div>
 
 <script>
   (function() {
-    // ═══════════════════════════════════════
-    //  CONSTANTS & STORAGE KEYS
-    // ═══════════════════════════════════════
-    const STORAGE_KEYS = {
-      USERS: 'moto_users',
-      MERCHANTS: 'moto_merchants',
-      LOGS: 'moto_logs',
-      SESSION: 'moto_session'
-    };
-    const DEFAULT_PASSWORD = 'motosana00';
-    const SESSION_TIMEOUT = 30 * 60 * 1000; // 30 minutes
-
-    // ═══════════════════════════════════════
-    //  SECURITY: PASSWORD HASHING (SHA-256)
-    // ═══════════════════════════════════════
-    async function hashPassword(password) {
-      const encoder = new TextEncoder();
-      const data = encoder.encode(password);
-      const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-      const hashArray = Array.from(new Uint8Array(hashBuffer));
-      return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-    }
-
-    // ═══════════════════════════════════════
-    //  SESSION MANAGEMENT
-    // ═══════════════════════════════════════
+    // ── CONSTANTS ──
+    const KEYS = { USERS:'moto_users', MERCHANTS:'moto_merchants', LOGS:'moto_logs', SESSION:'moto_session' };
+    const DEFAULT_PASS = 'motosana00';
+    const TIMEOUT = 30 * 60 * 1000;
     let sessionTimer;
-    function resetSessionTimer() {
-      clearTimeout(sessionTimer);
-      sessionTimer = setTimeout(logoutDueToInactivity, SESSION_TIMEOUT);
-    }
-    function logoutDueToInactivity() {
-      const currentUser = getCurrentUser();
-      if (currentUser) {
-        logActivity('session_timeout', 'Auto logout due to inactivity');
-        clearSession();
-        renderLogin();
-        showToast('Session expired. Please login again.', true);
-      }
-    }
-    function setSession(user) {
-      sessionStorage.setItem(STORAGE_KEYS.SESSION, JSON.stringify(user));
-      resetSessionTimer();
-    }
-    function getCurrentUser() {
-      const raw = sessionStorage.getItem(STORAGE_KEYS.SESSION);
-      return raw ? JSON.parse(raw) : null;
-    }
-    function clearSession() {
-      sessionStorage.removeItem(STORAGE_KEYS.SESSION);
-      clearTimeout(sessionTimer);
+
+    // ── SECURITY: SHA-256 HASHING ──
+    async function hashPassword(pwd) {
+      const enc = new TextEncoder();
+      const buf = await crypto.subtle.digest('SHA-256', enc.encode(pwd));
+      return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
     }
 
-    // ═══════════════════════════════════════
-    //  DATA LAYER (localStorage)
-    // ═══════════════════════════════════════
-    function getUsers() { return JSON.parse(localStorage.getItem(STORAGE_KEYS.USERS)) || []; }
-    function saveUsers(users) { localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(users)); }
-    function getMerchants() { return JSON.parse(localStorage.getItem(STORAGE_KEYS.MERCHANTS)) || []; }
-    function saveMerchants(merchants) { localStorage.setItem(STORAGE_KEYS.MERCHANTS, JSON.stringify(merchants)); }
-    function getLogs() { return JSON.parse(localStorage.getItem(STORAGE_KEYS.LOGS)) || []; }
-    function saveLogs(logs) { localStorage.setItem(STORAGE_KEYS.LOGS, JSON.stringify(logs)); }
+    // ── SESSION ──
+    function resetTimer() { clearTimeout(sessionTimer); sessionTimer = setTimeout(autoLogout, TIMEOUT); }
+    function autoLogout() {
+      const u = getCurrentUser();
+      if (u) { logActivity('session_timeout','Auto logout'); clearSession(); renderLogin(); showToast('Session expired',true); }
+    }
+    function setSession(user) { sessionStorage.setItem(KEYS.SESSION, JSON.stringify(user)); resetTimer(); }
+    function getCurrentUser() { try { return JSON.parse(sessionStorage.getItem(KEYS.SESSION)); } catch(e) { return null; } }
+    function clearSession() { sessionStorage.removeItem(KEYS.SESSION); clearTimeout(sessionTimer); }
 
-    function logActivity(action, details = '') {
-      const user = getCurrentUser();
-      if (!user) return;
+    // ── DATA LAYER ──
+    const getUsers = () => JSON.parse(localStorage.getItem(KEYS.USERS)) || [];
+    const saveUsers = (u) => localStorage.setItem(KEYS.USERS, JSON.stringify(u));
+    const getMerchants = () => JSON.parse(localStorage.getItem(KEYS.MERCHANTS)) || [];
+    const saveMerchants = (m) => localStorage.setItem(KEYS.MERCHANTS, JSON.stringify(m));
+    const getLogs = () => JSON.parse(localStorage.getItem(KEYS.LOGS)) || [];
+    const saveLogs = (l) => { if(l.length>500) l = l.slice(-500); localStorage.setItem(KEYS.LOGS, JSON.stringify(l)); };
+
+    function logActivity(action, details='') {
+      const u = getCurrentUser(); if(!u) return;
       const logs = getLogs();
-      logs.push({
-        timestamp: new Date().toISOString(),
-        user: user.username,
-        role: user.role,
-        action,
-        details: details.substring(0, 200) // limit length
-      });
-      // keep only last 500 logs
-      if (logs.length > 500) logs.shift();
+      logs.push({ timestamp: new Date().toISOString(), user: u.username, role: u.role, action, details: details.substring(0,200) });
       saveLogs(logs);
     }
 
-    // ═══════════════════════════════════════
-    //  INITIAL DATA (merged from all provided sets)
-    // ═══════════════════════════════════════
-    function getDefaultMerchants() {
-      return [
-        { id:"1", name:"Delight Beauty-Thika", location:"Thika", coords:"-1.05605,37.11084", status:"Waiting for confirmation from owner.", branding:"No", mn:"", iot:"", contact:"", phone:"", kp:"", notes:"" },
-        { id:"2", name:"BM Traders -Thika", location:"Thika", coords:"-1.05948,37.11652", status:"Mn-0082", branding:"Branding done", mn:"0082", iot:"", contact:"", phone:"", kp:"", notes:"" },
-        { id:"3", name:"Abrazack-Thika", location:"Thika", coords:"-1.04634,37.09155", status:"Mn-0038", branding:"Branding done", mn:"0038", iot:"", contact:"", phone:"", kp:"", notes:"" },
-        { id:"4", name:"Sammar shop-Thika", location:"Thika", coords:"-1.0412,37.08409", status:"Waiting for confirmation from owner.", branding:"No", mn:"", iot:"", contact:"", phone:"", kp:"", notes:"" },
-        { id:"5", name:"Surubi Stores-Thika", location:"Thika", coords:"-1.057644,37.10254", status:"Mn-0038", branding:"Branding done", mn:"0038", iot:"", contact:"", phone:"", kp:"", notes:"" },
-        { id:"6", name:"Trevor Butchery and Shop-Thika", location:"Thika", coords:"-1.06907,37.10545", status:"Waiting for confirmation from owner.", branding:"No", mn:"", iot:"", contact:"", phone:"", kp:"", notes:"" },
-        { id:"7", name:"JonaLucy-Thika", location:"Thika", coords:"-1.07566,37.10067", status:"", branding:"", mn:"", iot:"", contact:"", phone:"", kp:"", notes:"" },
-        { id:"8", name:"Landmark Kinyozi-Thika", location:"Thika", coords:"-1.07326,37.09206", status:"", branding:"Branding done", mn:"", iot:"", contact:"", phone:"", kp:"", notes:"" },
-        { id:"9", name:"Blessed Shop-Thika", location:"Thika", coords:"-1.07161,37.09328", status:"Waiting for confirmation from owner.", branding:"No", mn:"", iot:"", contact:"", phone:"", kp:"", notes:"" },
-        { id:"10", name:"KK Shop -Thika Witeithie", location:"Thika", coords:"-1.09102,37.07162", status:"Shop closed owner unreachable", branding:"", mn:"", iot:"", contact:"", phone:"", kp:"", notes:"" },
-        { id:"11", name:"Wakini genera-Thika Witeithie", location:"Thika", coords:"-1.071685,37.05801", status:"Waiting for confirmation from owner.", branding:"No", mn:"", iot:"", contact:"", phone:"", kp:"", notes:"" },
-        // Second set (Huruma, etc)
-        { id:"12", name:"Vaite gas supplies Huruma", location:"Huruma", coords:"-1.260334,36.865831", status:"Mn refilled, primed to full functionality, calibrated, customer UI orientation done", branding:"", mn:"0076", iot:"2995471", contact:"", phone:"", kp:"", notes:"" },
-        { id:"13", name:"Mama Mutua general shop Huruma", location:"Huruma", coords:"-1.2578497,36.8680367", status:"MN refilled, calibrated, customer UI orientation done", branding:"", mn:"0086", iot:"2995441", contact:"", phone:"", kp:"", notes:"" },
-        { id:"14", name:"Milestone Technology Ltd Huruma", location:"Huruma", coords:"-1.25725,36.86988", status:"Installed simcard, MN refill 340l, UI orientation done, data connection issue, not calibrated", branding:"", mn:"0078", iot:"3040602", contact:"", phone:"", kp:"", notes:"" },
-        { id:"15", name:"Milestone Technology Ltd 2 Huruma", location:"Huruma", coords:"-1.25725,36.86988", status:"Installed simcard, MN refill 340l, UI orientation done, data connection issue", branding:"", mn:"0077", iot:"299548", contact:"", phone:"", kp:"", notes:"" },
-        { id:"16", name:"Grasy Agencies and Gen shop Huruma", location:"Huruma", coords:"-1.25732,36.87325", status:"IOT sim card not installed, machine refill 340l, data connection issue", branding:"", mn:"0091", iot:"", contact:"", phone:"", kp:"", notes:"" },
-        { id:"17", name:"Tatu city MN", location:"Tatu City", coords:"-1.15,36.95", status:"Installation and refilling 340L", branding:"", mn:"", iot:"", contact:"", phone:"", kp:"", notes:"" },
-        { id:"18", name:"Mutinda shop", location:"Unknown", coords:"-1.15,36.95", status:"IOT simcard not installed, MN Refill 300L, needs data recharge, data connection issue", branding:"", mn:"0015", iot:"", contact:"", phone:"", kp:"", notes:"" },
-        // Githurai / Ruiru / Juja
-        { id:"19", name:"Steta Shop-Githurai 44", location:"Githurai 44", coords:"-1.19909,36.90748", status:"MN-0022, Mains cable required.", branding:"", mn:"0022", iot:"", contact:"", phone:"", kp:"", notes:"" },
-        { id:"20", name:"Judy shop githurai 44", location:"Githurai 44", coords:"-1.20333,36.91528", status:"MN-0017", branding:"", mn:"0017", iot:"", contact:"", phone:"", kp:"", notes:"" },
-        { id:"21", name:"Nichi Powels githurai 45", location:"Githurai 45", coords:"-1.21156,36.93269", status:"MN-0007", branding:"", mn:"0007", iot:"", contact:"", phone:"", kp:"", notes:"" },
-        { id:"22", name:"Mama Lulu -Ruiru", location:"Ruiru", coords:"-1.15447,36.94932", status:"MN-0051", branding:"", mn:"0051", iot:"", contact:"", phone:"", kp:"", notes:"" },
-        { id:"23", name:"Mutinda General- Ruiru", location:"Ruiru", coords:"-1.15945,36.94612", status:"MN-0015", branding:"", mn:"0015", iot:"", contact:"", phone:"", kp:"", notes:"" },
-        { id:"24", name:"Furaha General-Ruiru", location:"Ruiru", coords:"-1.15797,36.95131", status:"MN-0019", branding:"", mn:"0019", iot:"", contact:"", phone:"", kp:"", notes:"" },
-        { id:"25", name:"Kwa Jose kerosene-Ruiru", location:"Ruiru", coords:"-1.15144,36.94314", status:"MN-0016", branding:"", mn:"0016", iot:"", contact:"", phone:"", kp:"", notes:"" },
-        { id:"26", name:"Wa Alex Shop-Ruiru", location:"Ruiru", coords:"-1.14762,36.95414", status:"MN-0003", branding:"", mn:"0003", iot:"", contact:"", phone:"", kp:"", notes:"" },
-        { id:"27", name:"Duka Moja-Juja", location:"Juja", coords:"-1.15785,37.03868", status:"MN-0008", branding:"", mn:"0008", iot:"", contact:"", phone:"", kp:"", notes:"" },
-        { id:"28", name:"Mama Waithera Shop _Juja", location:"Juja", coords:"1.14422,37.0017", status:"MN-0081", branding:"", mn:"0081", iot:"", contact:"", phone:"", kp:"", notes:"" },
-        { id:"29", name:"Shiko General-Juja", location:"Juja", coords:"-1.1445,37.00783", status:"MN-0083", branding:"", mn:"0083", iot:"", contact:"", phone:"", kp:"", notes:"" },
-        // Huruma status set with valves, branding etc
-        { id:"30", name:"Bull's shop Huruma", location:"Huruma", coords:"-1.261325,36.8781857", status:"Valves opened, branding done, tablet/controller installed, machine awaiting refill", branding:"Branding done", mn:"0065", iot:"2995443", contact:"", phone:"", kp:"", notes:"" },
-        { id:"31", name:"Master's Kerosene pump Huruma", location:"Huruma", coords:"-1.2588451,36.8700281", status:"Valves opened, branding done, tablet/controller installed, refill box hoses cut, refill box to be installed before fuelling", branding:"Branding done", mn:"0068", iot:"2995456", contact:"", phone:"", kp:"", notes:"" },
-        { id:"32", name:"Ropem Telkom Huruma", location:"Huruma", coords:"-1.25943,36.8669556", status:"Valves opened, branding done, tablet/controller installed, machine awaiting relocation and installation before fuelling", branding:"Branding done", mn:"0066", iot:"2995439", contact:"", phone:"", kp:"", notes:"" },
-        { id:"33", name:"Ropem Telkom 2 Huruma", location:"Huruma", coords:"-1.25943,36.8669556", status:"Valves opened, branding done, tablet/controller installed, machine awaiting relocation and installation before fuelling", branding:"Branding done", mn:"0067", iot:"2995468", contact:"", phone:"", kp:"", notes:"" },
-        // Kero and Blue Gas
-        { id:"34", name:"Kero and Blue Gas", location:"Nairobi", coords:"-1.26115,36.86294", status:"Contact: Anthony Mwangi Njuguna, 0726654592, KP No: 2193", branding:"", mn:"", iot:"", contact:"Anthony Mwangi Njuguna", phone:"0726654592", kp:"2193", notes:"" },
-        { id:"35", name:"Davie’s Electrical and Phone Accessories Shop", location:"Nairobi", coords:"-1.2552832,36.8624338", status:"Contact: Moses Aluoch Ngira, 0799058294 / 0703305943, KP No: KP-1379/2838", branding:"", mn:"", iot:"", contact:"Moses Aluoch Ngira", phone:"0799058294", kp:"KP-1379/2838", notes:"" },
-        { id:"36", name:"Henice Kerosene and Gas", location:"Nairobi", coords:"-1.289376,36.84455605", status:"Contact: Henry Gakuyi, 0724407896 / 0718593216, KP No: 0262", branding:"", mn:"", iot:"", contact:"Henry Gakuyi", phone:"0724407896", kp:"0262", notes:"" },
-        // Kimuka etc
-        { id:"37", name:"Kimuka gas", location:"Ngong", coords:"-1.359592,36.598003", status:"KP-1459, ID 11239, Elphinah Nyaboke, +254759108560", branding:"", mn:"", iot:"", contact:"Elphinah Nyaboke", phone:"+254759108560", kp:"1459", notes:"" },
-        { id:"38", name:"Maristella Enterprise", location:"Ngong", coords:"-1.33568,36.67214", status:"KP-3587, ID 18816, Stella Wachera Kingori, +254722305666", branding:"", mn:"", iot:"", contact:"Stella Wachera Kingori", phone:"+254722305666", kp:"3587", notes:"" }
-      ];
-    }
+    // ── DEFAULT DATA (all 38 merchants) ──
+    const defaultMerchants = [
+      {id:"1",name:"Delight Beauty-Thika",location:"Thika",coords:"-1.05605,37.11084",status:"Waiting for confirmation",branding:"No",mn:"",iot:"",contact:"",phone:"",kp:""},
+      {id:"2",name:"BM Traders -Thika",location:"Thika",coords:"-1.05948,37.11652",status:"Mn-0082",branding:"Branding done",mn:"0082",iot:"",contact:"",phone:"",kp:""},
+      {id:"3",name:"Abrazack-Thika",location:"Thika",coords:"-1.04634,37.09155",status:"Mn-0038",branding:"Branding done",mn:"0038",iot:"",contact:"",phone:"",kp:""},
+      {id:"4",name:"Sammar shop-Thika",location:"Thika",coords:"-1.0412,37.08409",status:"Waiting for confirmation",branding:"No",mn:"",iot:"",contact:"",phone:"",kp:""},
+      {id:"5",name:"Surubi Stores-Thika",location:"Thika",coords:"-1.057644,37.10254",status:"Mn-0038",branding:"Branding done",mn:"0038",iot:"",contact:"",phone:"",kp:""},
+      {id:"6",name:"Trevor Butchery and Shop-Thika",location:"Thika",coords:"-1.06907,37.10545",status:"Waiting for confirmation",branding:"No",mn:"",iot:"",contact:"",phone:"",kp:""},
+      {id:"7",name:"JonaLucy-Thika",location:"Thika",coords:"-1.07566,37.10067",status:"",branding:"",mn:"",iot:"",contact:"",phone:"",kp:""},
+      {id:"8",name:"Landmark Kinyozi-Thika",location:"Thika",coords:"-1.07326,37.09206",status:"",branding:"Branding done",mn:"",iot:"",contact:"",phone:"",kp:""},
+      {id:"9",name:"Blessed Shop-Thika",location:"Thika",coords:"-1.07161,37.09328",status:"Waiting for confirmation",branding:"No",mn:"",iot:"",contact:"",phone:"",kp:""},
+      {id:"10",name:"KK Shop -Thika Witeithie",location:"Thika",coords:"-1.09102,37.07162",status:"Shop closed owner unreachable",branding:"",mn:"",iot:"",contact:"",phone:"",kp:""},
+      {id:"11",name:"Wakini genera-Thika Witeithie",location:"Thika",coords:"-1.071685,37.05801",status:"Waiting for confirmation",branding:"No",mn:"",iot:"",contact:"",phone:"",kp:""},
+      {id:"12",name:"Vaite gas supplies Huruma",location:"Huruma",coords:"-1.260334,36.865831",status:"Mn refilled, calibrated, UI done",branding:"",mn:"0076",iot:"2995471",contact:"",phone:"",kp:""},
+      {id:"13",name:"Mama Mutua general shop Huruma",location:"Huruma",coords:"-1.2578497,36.8680367",status:"MN refilled, calibrated, UI done",branding:"",mn:"0086",iot:"2995441",contact:"",phone:"",kp:""},
+      {id:"14",name:"Milestone Technology Ltd Huruma",location:"Huruma",coords:"-1.25725,36.86988",status:"Simcard installed, refill 340L, data issue",branding:"",mn:"0078",iot:"3040602",contact:"",phone:"",kp:""},
+      {id:"15",name:"Milestone Technology Ltd 2 Huruma",location:"Huruma",coords:"-1.25725,36.86988",status:"Simcard installed, refill 340L, data issue",branding:"",mn:"0077",iot:"299548",contact:"",phone:"",kp:""},
+      {id:"16",name:"Grasy Agencies and Gen shop Huruma",location:"Huruma",coords:"-1.25732,36.87325",status:"IOT sim not installed, refill 340L",branding:"",mn:"0091",iot:"",contact:"",phone:"",kp:""},
+      {id:"17",name:"Tatu city MN",location:"Tatu City",coords:"-1.15,36.95",status:"Installation and refilling 340L",branding:"",mn:"",iot:"",contact:"",phone:"",kp:""},
+      {id:"18",name:"Mutinda shop",location:"Unknown",coords:"-1.15,36.95",status:"IOT sim not installed, refill 300L, data recharge needed",branding:"",mn:"0015",iot:"",contact:"",phone:"",kp:""},
+      {id:"19",name:"Steta Shop-Githurai 44",location:"Githurai",coords:"-1.19909,36.90748",status:"MN-0022, mains cable required",branding:"",mn:"0022",iot:"",contact:"",phone:"",kp:""},
+      {id:"20",name:"Judy shop githurai 44",location:"Githurai",coords:"-1.20333,36.91528",status:"MN-0017",branding:"",mn:"0017",iot:"",contact:"",phone:"",kp:""},
+      {id:"21",name:"Nichi Powels githurai 45",location:"Githurai",coords:"-1.21156,36.93269",status:"MN-0007",branding:"",mn:"0007",iot:"",contact:"",phone:"",kp:""},
+      {id:"22",name:"Mama Lulu -Ruiru",location:"Ruiru",coords:"-1.15447,36.94932",status:"MN-0051",branding:"",mn:"0051",iot:"",contact:"",phone:"",kp:""},
+      {id:"23",name:"Mutinda General- Ruiru",location:"Ruiru",coords:"-1.15945,36.94612",status:"MN-0015",branding:"",mn:"0015",iot:"",contact:"",phone:"",kp:""},
+      {id:"24",name:"Furaha General-Ruiru",location:"Ruiru",coords:"-1.15797,36.95131",status:"MN-0019",branding:"",mn:"0019",iot:"",contact:"",phone:"",kp:""},
+      {id:"25",name:"Kwa Jose kerosene-Ruiru",location:"Ruiru",coords:"-1.15144,36.94314",status:"MN-0016",branding:"",mn:"0016",iot:"",contact:"",phone:"",kp:""},
+      {id:"26",name:"Wa Alex Shop-Ruiru",location:"Ruiru",coords:"-1.14762,36.95414",status:"MN-0003",branding:"",mn:"0003",iot:"",contact:"",phone:"",kp:""},
+      {id:"27",name:"Duka Moja-Juja",location:"Juja",coords:"-1.15785,37.03868",status:"MN-0008",branding:"",mn:"0008",iot:"",contact:"",phone:"",kp:""},
+      {id:"28",name:"Mama Waithera Shop _Juja",location:"Juja",coords:"1.14422,37.0017",status:"MN-0081",branding:"",mn:"0081",iot:"",contact:"",phone:"",kp:""},
+      {id:"29",name:"Shiko General-Juja",location:"Juja",coords:"-1.1445,37.00783",status:"MN-0083",branding:"",mn:"0083",iot:"",contact:"",phone:"",kp:""},
+      {id:"30",name:"Bull's shop Huruma",location:"Huruma",coords:"-1.261325,36.8781857",status:"Valves open, branded, tablet installed, awaiting refill",branding:"Branding done",mn:"0065",iot:"2995443",contact:"",phone:"",kp:""},
+      {id:"31",name:"Master's Kerosene pump Huruma",location:"Huruma",coords:"-1.2588451,36.8700281",status:"Valves open, branded, refill box to be installed",branding:"Branding done",mn:"0068",iot:"2995456",contact:"",phone:"",kp:""},
+      {id:"32",name:"Ropem Telkom Huruma",location:"Huruma",coords:"-1.25943,36.8669556",status:"Valves open, branded, awaiting relocation",branding:"Branding done",mn:"0066",iot:"2995439",contact:"",phone:"",kp:""},
+      {id:"33",name:"Ropem Telkom 2 Huruma",location:"Huruma",coords:"-1.25943,36.8669556",status:"Valves open, branded, awaiting relocation",branding:"Branding done",mn:"0067",iot:"2995468",contact:"",phone:"",kp:""},
+      {id:"34",name:"Kero and Blue Gas",location:"Nairobi",coords:"-1.26115,36.86294",status:"Contact: Anthony Mwangi Njuguna, 0726654592, KP 2193",branding:"",mn:"",iot:"",contact:"Anthony Mwangi Njuguna",phone:"0726654592",kp:"2193"},
+      {id:"35",name:"Davie’s Electrical and Phone Accessories",location:"Nairobi",coords:"-1.2552832,36.8624338",status:"Contact: Moses Aluoch Ngira, 0799058294",branding:"",mn:"",iot:"",contact:"Moses Aluoch Ngira",phone:"0799058294",kp:"KP-1379/2838"},
+      {id:"36",name:"Henice Kerosene and Gas",location:"Nairobi",coords:"-1.289376,36.84455605",status:"Contact: Henry Gakuyi, 0724407896, KP 0262",branding:"",mn:"",iot:"",contact:"Henry Gakuyi",phone:"0724407896",kp:"0262"},
+      {id:"37",name:"Kimuka gas",location:"Ngong",coords:"-1.359592,36.598003",status:"KP-1459, Elphinah Nyaboke, +254759108560",branding:"",mn:"",iot:"",contact:"Elphinah Nyaboke",phone:"+254759108560",kp:"1459"},
+      {id:"38",name:"Maristella Enterprise",location:"Ngong",coords:"-1.33568,36.67214",status:"KP-3587, Stella Wachera Kingori, +254722305666",branding:"",mn:"",iot:"",contact:"Stella Wachera Kingori",phone:"+254722305666",kp:"3587"}
+    ];
 
-    // ═══════════════════════════════════════
-    //  INITIALIZATION
-    // ═══════════════════════════════════════
-    async function initializeData() {
-      if (!localStorage.getItem(STORAGE_KEYS.USERS)) {
+    // ── HELPERS ──
+    const root = document.getElementById('dynamic-root');
+    function showToast(msg, err=false) {
+      const old = document.querySelector('.toast'); if(old) old.remove();
+      const t = document.createElement('div'); t.className = 'toast';
+      t.style.borderLeftColor = err ? 'var(--danger)' : 'var(--accent)'; t.textContent = msg;
+      document.body.appendChild(t); setTimeout(() => t.remove(), 3000);
+    }
+    function escapeHtml(str) { const d = document.createElement('div'); d.textContent = str||''; return d.innerHTML; }
+    function escapeAttr(str) { return (str||'').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+
+    // ── INIT ──
+    async function initData() {
+      if(!localStorage.getItem(KEYS.USERS)) {
         const adminHash = await hashPassword('crud');
-        const defaultUserHash = await hashPassword(DEFAULT_PASSWORD);
+        const fieldHash = await hashPassword(DEFAULT_PASS);
         saveUsers([
-          { username:'moto_admin', password: adminHash, role:'admin', passwordChanged:true },
-          { username:'fieldagent1', password: defaultUserHash, role:'field', passwordChanged:false }
+          { username:'moto_admin', password:adminHash, role:'admin', passwordChanged:true },
+          { username:'fieldagent1', password:fieldHash, role:'field', passwordChanged:false }
         ]);
       }
-      if (!localStorage.getItem(STORAGE_KEYS.MERCHANTS)) {
-        saveMerchants(getDefaultMerchants());
-      }
-      if (!localStorage.getItem(STORAGE_KEYS.LOGS)) {
-        saveLogs([]);
-      }
+      if(!localStorage.getItem(KEYS.MERCHANTS)) saveMerchants(defaultMerchants);
+      if(!localStorage.getItem(KEYS.LOGS)) saveLogs([]);
     }
 
-    // ═══════════════════════════════════════
-    //  UI HELPERS
-    // ═══════════════════════════════════════
-    const root = document.getElementById('dynamic-root');
-    function showToast(msg, isError=false) {
-      const existing = document.querySelector('.toast');
-      if (existing) existing.remove();
-      const toast = document.createElement('div');
-      toast.className = 'toast';
-      toast.style.borderLeftColor = isError ? 'var(--danger)' : 'var(--accent)';
-      toast.textContent = msg;
-      document.body.appendChild(toast);
-      setTimeout(() => toast.remove(), 3000);
-    }
-    function escapeHtml(str) {
-      const div = document.createElement('div');
-      div.textContent = str || '';
-      return div.innerHTML;
-    }
-    function escapeAttr(str) {
-      return (str||'').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    }
-
-    // ═══════════════════════════════════════
-    //  RENDER LOGIN
-    // ═══════════════════════════════════════
+    // ── RENDER LOGIN ──
     function renderLogin() {
-      root.innerHTML = `
-        <div class="card" style="max-width:400px;margin:60px auto;text-align:center;">
-          <div class="logo" style="justify-content:center;font-size:2.2rem;"><span>🔥 Moto Nzuri</span></div>
-          <p style="color:var(--text-dim);margin:10px 0;">Field Operations · Smart Reports</p>
-          <input type="text" id="login-username" placeholder="Phone / Username" autocomplete="off">
-          <input type="password" id="login-password" placeholder="Password" style="margin-top:12px;">
-          <button id="login-btn" class="accent" style="width:100%;margin-top:20px;">🔐 Sign In</button>
-          <p style="font-size:0.75rem;color:var(--text-dim);margin-top:15px;">Default password: motosana00</p>
-        </div>
-      `;
-      document.getElementById('login-btn').addEventListener('click', handleLogin);
+      root.innerHTML = `<div class="card" style="max-width:400px;margin:60px auto;text-align:center;">
+        <div class="logo" style="justify-content:center;font-size:2.2rem;"><span>🔥 Moto Nzuri</span></div>
+        <p style="color:var(--text-dim);">Field Operations · Smart Reports</p>
+        <input type="text" id="login-username" placeholder="Phone / Username" autocomplete="off">
+        <input type="password" id="login-password" placeholder="Password" style="margin-top:12px;">
+        <button id="login-btn" class="accent" style="width:100%;margin-top:20px;">🔐 Sign In</button>
+        <p style="font-size:0.75rem;color:var(--text-dim);margin-top:15px;">Default password: motosana00</p>
+      </div>`;
+      document.getElementById('login-btn').onclick = handleLogin;
     }
 
     async function handleLogin() {
       const username = document.getElementById('login-username').value.trim();
-      const password = document.getElementById('login-password').value.trim();
-      if (!username || !password) return showToast('Enter phone/username and password', true);
+      const pwd = document.getElementById('login-password').value.trim();
+      if(!username || !pwd) return showToast('Enter username and password', true);
       const users = getUsers();
       const user = users.find(u => u.username === username);
-      if (!user) return showToast('User not found', true);
-      const hashedInput = await hashPassword(password);
-      if (user.password !== hashedInput) return showToast('Wrong password', true);
+      if(!user) return showToast('User not found', true);
+      const hash = await hashPassword(pwd);
+      if(user.password !== hash) return showToast('Wrong password', true);
       setSession(user);
       logActivity('login', `User ${username} logged in`);
-      if (!user.passwordChanged) {
-        renderChangePassword(user);
-      } else {
-        renderMainApp();
-      }
+      if(!user.passwordChanged) renderChangePassword(user);
+      else renderMainApp();
     }
 
-    // ═══════════════════════════════════════
-    //  CHANGE PASSWORD
-    // ═══════════════════════════════════════
     function renderChangePassword(user) {
-      root.innerHTML = `
-        <div class="card" style="max-width:400px;margin:60px auto;">
-          <h3>🔥 Change Password</h3>
-          <p style="color:var(--text-dim);">You must update your default password.</p>
-          <input type="password" id="new-password1" placeholder="New password">
-          <input type="password" id="new-password2" placeholder="Confirm new password" style="margin-top:12px;">
-          <button id="update-password-btn" class="accent" style="width:100%;margin-top:20px;">Update Password</button>
-        </div>
-      `;
-      document.getElementById('update-password-btn').addEventListener('click', async () => {
-        const p1 = document.getElementById('new-password1').value.trim();
-        const p2 = document.getElementById('new-password2').value.trim();
-        if (p1.length < 4) return showToast('Password too short (min 4)', true);
-        if (p1 !== p2) return showToast('Passwords do not match', true);
-        const users = getUsers();
-        const idx = users.findIndex(u => u.username === user.username);
-        if (idx !== -1) {
-          users[idx].password = await hashPassword(p1);
-          users[idx].passwordChanged = true;
-          saveUsers(users);
-          setSession(users[idx]);
-          logActivity('password_change', 'User changed password');
-          showToast('Password updated!');
-          renderMainApp();
-        }
-      });
+      root.innerHTML = `<div class="card" style="max-width:400px;margin:60px auto;">
+        <h3>🔥 Change Password</h3><p style="color:var(--text-dim);">You must update your default password.</p>
+        <input type="password" id="new1" placeholder="New password"><input type="password" id="new2" placeholder="Confirm" style="margin-top:12px;">
+        <button id="update-btn" class="accent" style="width:100%;margin-top:20px;">Update</button></div>`;
+      document.getElementById('update-btn').onclick = async () => {
+        const p1 = document.getElementById('new1').value.trim();
+        const p2 = document.getElementById('new2').value.trim();
+        if(p1.length<4) return showToast('Too short', true);
+        if(p1!==p2) return showToast('Passwords mismatch', true);
+        const users = getUsers(); const idx = users.findIndex(u => u.username===user.username);
+        if(idx!==-1) { users[idx].password = await hashPassword(p1); users[idx].passwordChanged = true; saveUsers(users); setSession(users[idx]); }
+        logActivity('password_change'); showToast('Password updated'); renderMainApp();
+      };
     }
 
-    // ═══════════════════════════════════════
-    //  MAIN APP (after login)
-    // ═══════════════════════════════════════
+    // ── MAIN APP ──
     function renderMainApp() {
-      const currentUser = getCurrentUser();
-      if (!currentUser) { renderLogin(); return; }
-      resetSessionTimer();
-      root.innerHTML = `
-        <div class="card" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;">
-          <div class="logo"><span>🔥 Moto Nzuri</span></div>
-          <div class="flex-row">
-            <span style="color:var(--accent);">👤 ${escapeHtml(currentUser.username)} (${currentUser.role})</span>
-            <button id="logout-btn" class="danger">↪️ Logout</button>
-          </div>
-        </div>
-        <div class="nav-tabs" id="nav-tabs">
-          <button class="nav-tab active" data-tab="merchants">🏪 Merchants</button>
-          ${currentUser.role === 'admin' ? '<button class="nav-tab" data-tab="users">👥 Users</button><button class="nav-tab" data-tab="logs">📜 Activity Logs</button>' : ''}
-        </div>
-        <div id="tab-content" class="card"></div>
-      `;
-      document.getElementById('logout-btn').addEventListener('click', () => {
-        logActivity('logout');
-        clearSession();
-        renderLogin();
+      const cur = getCurrentUser(); if(!cur) { renderLogin(); return; }
+      resetTimer();
+      root.innerHTML = `<div class="card" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;">
+        <div class="logo"><span>🔥 Moto Nzuri</span></div>
+        <div class="flex-row"><span style="color:var(--accent);">👤 ${escapeHtml(cur.username)} (${cur.role})</span>
+        <button id="logout-btn" class="danger">↪️ Logout</button></div></div>
+        <div class="nav-tabs" id="nav-tabs"><button class="nav-tab active" data-tab="merchants">🏪 Merchants</button>
+        ${cur.role==='admin'?'<button class="nav-tab" data-tab="users">👥 Users</button><button class="nav-tab" data-tab="logs">📜 Logs</button>':''}</div>
+        <div id="tab-content" class="card"></div>`;
+      document.getElementById('logout-btn').onclick = () => { logActivity('logout'); clearSession(); renderLogin(); };
+      document.querySelectorAll('.nav-tab').forEach(tab => tab.onclick = (e) => {
+        document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+        e.target.classList.add('active');
+        const tabName = e.target.dataset.tab;
+        if(tabName==='merchants') renderMerchants();
+        else if(tabName==='users') renderUsers();
+        else if(tabName==='logs') renderLogs();
       });
-      document.querySelectorAll('.nav-tab').forEach(tab => {
-        tab.addEventListener('click', (e) => {
-          document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-          e.target.classList.add('active');
-          const tabName = e.target.dataset.tab;
-          if (tabName === 'merchants') renderMerchantsTab();
-          else if (tabName === 'users') renderUsersTab();
-          else if (tabName === 'logs') renderLogsTab();
-        });
-      });
-      renderMerchantsTab(); // default
-      // activity tracking on user interaction
-      document.addEventListener('click', resetSessionTimer);
-      document.addEventListener('keypress', resetSessionTimer);
+      renderMerchants();
+      document.addEventListener('click', resetTimer);
     }
 
-    // ═══════════════════════════════════════
-    //  MERCHANTS TAB
-    // ═══════════════════════════════════════
-    function renderMerchantsTab() {
+    // ── MERCHANTS TAB (with delegation) ──
+    function renderMerchants() {
       const merchants = getMerchants();
-      const tabContent = document.getElementById('tab-content');
-      let html = `
-        <div class="flex-row" style="justify-content:space-between;margin-bottom:15px;">
-          <h3>📍 Merchant Locations (${merchants.length})</h3>
-          <div class="flex-row">
-            <button id="add-merchant-btn" class="accent">➕ Add Merchant</button>
-            <button id="export-pdf-btn">🖨️ Export PDF</button>
-            <button id="share-wa-btn">💬 Share WhatsApp</button>
-          </div>
-        </div>
-        <div class="table-wrapper">
-          <table>
-            <thead><tr><th>Name</th><th>MN</th><th>Coordinates</th><th>Status</th><th>Branding</th><th>IOT</th><th>Contact</th><th>Actions</th></tr></thead>
-            <tbody>
-      `;
+      const content = document.getElementById('tab-content');
+      let html = `<div class="flex-row" style="justify-content:space-between;"><h3>📍 Merchants (${merchants.length})</h3>
+        <div class="flex-row"><button id="add-merchant-btn" class="accent">➕ Add</button>
+        <button id="export-pdf-btn">🖨️ PDF</button><button id="share-wa-btn">💬 WhatsApp</button></div></div>
+        <div class="table-wrapper"><table><thead><tr><th>Name</th><th>MN</th><th>Map</th><th>Status</th><th>Branding</th><th>IOT</th><th>Contact</th><th>Actions</th></tr></thead><tbody>`;
       merchants.forEach(m => {
         html += `<tr>
-          <td>${escapeHtml(m.name)}</td>
-          <td>${escapeHtml(m.mn||'')}</td>
-          <td><a href="https://www.google.com/maps?q=${m.coords}" target="_blank" class="map-link" onclick="logActivity('map_click','${escapeAttr(m.name)}')">${m.coords}</a></td>
-          <td style="max-width:200px;">${escapeHtml(m.status||'')}</td>
+          <td>${escapeHtml(m.name)}</td><td>${escapeHtml(m.mn||'')}</td>
+          <td><span class="map-link" data-coords="${escapeAttr(m.coords)}" data-name="${escapeAttr(m.name)}">${m.coords}</span></td>
+          <td>${escapeHtml(m.status||'')}</td>
           <td><span class="badge ${m.branding.includes('done')?'badge-success':'badge-warning'}">${m.branding||'Pending'}</span></td>
-          <td>${escapeHtml(m.iot||'')}</td>
-          <td>${escapeHtml(m.contact||'')} ${escapeHtml(m.phone||'')}</td>
-          <td class="flex-row" style="gap:4px;">
-            <button class="edit-merchant-btn" data-id="${m.id}">✏️</button>
-            <button class="history-btn" data-id="${m.id}">📋</button>
-            <button class="delete-merchant-btn danger" data-id="${m.id}">🗑️</button>
-          </td>
-        </tr>`;
+          <td>${escapeHtml(m.iot||'')}</td><td>${escapeHtml(m.contact||'')} ${escapeHtml(m.phone||'')}</td>
+          <td class="flex-row"><button class="edit-merchant" data-id="${m.id}">✏️</button>
+          <button class="history-merchant" data-id="${m.id}">📋</button>
+          <button class="delete-merchant danger" data-id="${m.id}">🗑️</button></td></tr>`;
       });
       html += `</tbody></table></div>`;
-      tabContent.innerHTML = html;
-      
-      document.getElementById('add-merchant-btn').addEventListener('click', () => openMerchantModal());
-      document.getElementById('export-pdf-btn').addEventListener('click', () => { logActivity('export_pdf'); window.print(); });
-      document.getElementById('share-wa-btn').addEventListener('click', shareWhatsApp);
-      
-      document.querySelectorAll('.edit-merchant-btn').forEach(b => b.addEventListener('click', (e) => {
-        const id = e.target.dataset.id;
-        const merchant = getMerchants().find(m => m.id === id);
-        if (merchant) openMerchantModal(merchant);
-      }));
-      document.querySelectorAll('.history-btn').forEach(b => b.addEventListener('click', (e) => {
-        const id = e.target.dataset.id;
-        renderMerchantHistory(id);
-      }));
-      document.querySelectorAll('.delete-merchant-btn').forEach(b => b.addEventListener('click', (e) => {
-        const id = e.target.dataset.id;
-        if (confirm('Delete this merchant?')) {
-          let merchants = getMerchants().filter(m => m.id !== id);
-          saveMerchants(merchants);
-          logActivity('delete_merchant', `Deleted merchant ID ${id}`);
-          renderMerchantsTab();
-          showToast('Merchant deleted');
-        }
-      }));
-    }
+      content.innerHTML = html;
 
-    function openMerchantModal(merchant = null) {
-      const isEdit = !!merchant;
-      const modal = document.createElement('div');
-      modal.className = 'modal';
-      modal.innerHTML = `
-        <div class="modal-content">
-          <h3>${isEdit ? 'Edit' : 'Add'} Merchant</h3>
-          <input type="text" id="merchant-name" placeholder="Shop Name" value="${isEdit ? escapeAttr(merchant.name) : ''}">
-          <div class="flex-row"><input type="text" id="merchant-location" placeholder="Location" value="${isEdit ? escapeAttr(merchant.location) : ''}"><input type="text" id="merchant-coords" placeholder="Lat,Lng" value="${isEdit ? merchant.coords : ''}"></div>
-          <input type="text" id="merchant-mn" placeholder="MN number" value="${isEdit ? merchant.mn||'' : ''}">
-          <input type="text" id="merchant-iot" placeholder="IOT number" value="${isEdit ? merchant.iot||'' : ''}">
-          <textarea id="merchant-status" rows="3" placeholder="Status / Notes">${isEdit ? escapeAttr(merchant.status) : ''}</textarea>
-          <select id="merchant-branding">
-            <option value="Branding done" ${isEdit && merchant.branding==='Branding done'?'selected':''}>Branding done</option>
-            <option value="Pending" ${isEdit && merchant.branding==='Pending'?'selected':''}>Pending</option>
-            <option value="No" ${isEdit && merchant.branding==='No'?'selected':''}>No</option>
-          </select>
-          <div class="flex-row"><input type="text" id="merchant-contact" placeholder="Contact person" value="${isEdit ? merchant.contact||'' : ''}"><input type="text" id="merchant-phone" placeholder="Phone" value="${isEdit ? merchant.phone||'' : ''}"></div>
-          <div class="flex-row" style="justify-content:flex-end;margin-top:20px;">
-            <button id="cancel-merchant-modal">Cancel</button>
-            <button id="save-merchant-btn" class="accent">Save</button>
-          </div>
-        </div>
-      `;
-      document.body.appendChild(modal);
-      document.getElementById('cancel-merchant-modal').addEventListener('click', () => modal.remove());
-      document.getElementById('save-merchant-btn').addEventListener('click', () => {
-        const name = document.getElementById('merchant-name').value.trim();
-        const coords = document.getElementById('merchant-coords').value.trim();
-        if (!name || !coords) return showToast('Name and coordinates required', true);
-        let merchants = getMerchants();
-        const data = {
-          id: isEdit ? merchant.id : Date.now().toString(),
-          name,
-          location: document.getElementById('merchant-location').value.trim(),
-          coords,
-          mn: document.getElementById('merchant-mn').value.trim(),
-          iot: document.getElementById('merchant-iot').value.trim(),
-          status: document.getElementById('merchant-status').value.trim(),
-          branding: document.getElementById('merchant-branding').value,
-          contact: document.getElementById('merchant-contact').value.trim(),
-          phone: document.getElementById('merchant-phone').value.trim(),
-          notes: '' // reserved
-        };
-        if (isEdit) {
-          const idx = merchants.findIndex(m => m.id === merchant.id);
-          if (idx !== -1) merchants[idx] = data;
-        } else {
-          merchants.push(data);
+      // Event delegation
+      content.addEventListener('click', (e) => {
+        const target = e.target;
+        if(target.classList.contains('map-link')) {
+          const coords = target.dataset.coords;
+          const name = target.dataset.name;
+          logActivity('map_click', `Opened map for ${name}`);
+          window.open(`https://www.google.com/maps?q=${coords}`, '_blank');
         }
-        saveMerchants(merchants);
-        logActivity(isEdit?'edit_merchant':'add_merchant', `Merchant: ${name}`);
-        modal.remove();
-        renderMerchantsTab();
-        showToast('Merchant saved!');
+        else if(target.classList.contains('edit-merchant')) {
+          const merchant = getMerchants().find(m => m.id === target.dataset.id);
+          if(merchant) openMerchantModal(merchant);
+        }
+        else if(target.classList.contains('history-merchant')) {
+          renderMerchantHistory(target.dataset.id);
+        }
+        else if(target.classList.contains('delete-merchant')) {
+          if(confirm('Delete this merchant?')) {
+            const updated = getMerchants().filter(m => m.id !== target.dataset.id);
+            saveMerchants(updated); logActivity('delete_merchant', target.dataset.id); renderMerchants(); showToast('Deleted');
+          }
+        }
       });
+
+      document.getElementById('add-merchant-btn').onclick = () => openMerchantModal();
+      document.getElementById('export-pdf-btn').onclick = () => { logActivity('export_pdf'); window.print(); };
+      document.getElementById('share-wa-btn').onclick = shareWhatsApp;
     }
 
-    function renderMerchantHistory(merchantId) {
-      const merchant = getMerchants().find(m => m.id === merchantId);
-      if (!merchant) return;
-      const logs = getLogs().filter(l => l.details.includes(merchant.name) || l.action.includes('merchant'));
-      const modal = document.createElement('div');
-      modal.className = 'modal';
-      modal.innerHTML = `
-        <div class="modal-content">
-          <h3>📜 History for ${escapeHtml(merchant.name)}</h3>
-          <div style="max-height:400px;overflow-y:auto;">
-            ${logs.length === 0 ? '<p>No activity recorded.</p>' : logs.map(l => `
-              <div class="history-entry">
-                <strong>${new Date(l.timestamp).toLocaleString()}</strong> - ${escapeHtml(l.user)}<br>
-                <span>${escapeHtml(l.action)}: ${escapeHtml(l.details)}</span>
-              </div>
-            `).join('')}
-          </div>
-          <button id="close-history-modal" style="margin-top:15px;">Close</button>
-        </div>
-      `;
+    function openMerchantModal(merchant=null) {
+      const modal = document.createElement('div'); modal.className = 'modal';
+      modal.innerHTML = `<div class="modal-content"><h3>${merchant?'Edit':'Add'} Merchant</h3>
+        <input id="m-name" placeholder="Shop Name" value="${merchant?escapeAttr(merchant.name):''}">
+        <div class="flex-row"><input id="m-loc" placeholder="Location" value="${merchant?escapeAttr(merchant.location):''}">
+        <input id="m-coords" placeholder="lat,lng" value="${merchant?merchant.coords:''}"></div>
+        <input id="m-mn" placeholder="MN" value="${merchant?merchant.mn||'':''}">
+        <input id="m-iot" placeholder="IOT" value="${merchant?merchant.iot||'':''}">
+        <textarea id="m-status" rows="3" placeholder="Status">${merchant?escapeAttr(merchant.status):''}</textarea>
+        <select id="m-branding"><option value="Branding done" ${merchant&&merchant.branding==='Branding done'?'selected':''}>Branding done</option>
+        <option value="Pending" ${merchant&&merchant.branding==='Pending'?'selected':''}>Pending</option></select>
+        <div class="flex-row"><input id="m-contact" placeholder="Contact" value="${merchant?escapeAttr(merchant.contact||''):''}">
+        <input id="m-phone" placeholder="Phone" value="${merchant?escapeAttr(merchant.phone||''):''}"></div>
+        <div class="flex-row" style="justify-content:flex-end;"><button id="cancel-modal">Cancel</button>
+        <button id="save-modal" class="accent">Save</button></div></div>`;
       document.body.appendChild(modal);
-      document.getElementById('close-history-modal').addEventListener('click', () => modal.remove());
+      document.getElementById('cancel-modal').onclick = () => modal.remove();
+      document.getElementById('save-modal').onclick = () => {
+        const name = document.getElementById('m-name').value.trim();
+        const coords = document.getElementById('m-coords').value.trim();
+        if(!name||!coords) return showToast('Name & coords required',true);
+        const data = {
+          id: merchant ? merchant.id : Date.now().toString(),
+          name, location: document.getElementById('m-loc').value.trim(), coords,
+          mn: document.getElementById('m-mn').value.trim(), iot: document.getElementById('m-iot').value.trim(),
+          status: document.getElementById('m-status').value.trim(), branding: document.getElementById('m-branding').value,
+          contact: document.getElementById('m-contact').value.trim(), phone: document.getElementById('m-phone').value.trim(), kp:''
+        };
+        let merchants = getMerchants();
+        if(merchant) { const idx = merchants.findIndex(m=>m.id===merchant.id); if(idx!==-1) merchants[idx]=data; }
+        else merchants.push(data);
+        saveMerchants(merchants); logActivity(merchant?'edit_merchant':'add_merchant', name);
+        modal.remove(); renderMerchants(); showToast('Saved');
+      };
+    }
+
+    function renderMerchantHistory(id) {
+      const merchant = getMerchants().find(m=>m.id===id); if(!merchant) return;
+      const logs = getLogs().filter(l=>l.details.includes(merchant.name));
+      const modal = document.createElement('div'); modal.className='modal';
+      modal.innerHTML = `<div class="modal-content"><h3>History: ${escapeHtml(merchant.name)}</h3>
+        <div style="max-height:300px;overflow:auto;">${logs.map(l=>`<div class="history-entry"><strong>${new Date(l.timestamp).toLocaleString()}</strong> - ${escapeHtml(l.user)}<br>${escapeHtml(l.action)}: ${escapeHtml(l.details)}</div>`).join('')||'No activity'}</div>
+        <button id="close-hist" style="margin-top:15px;">Close</button></div>`;
+      document.body.appendChild(modal);
+      document.getElementById('close-hist').onclick = () => modal.remove();
     }
 
     function shareWhatsApp() {
-      const merchants = getMerchants();
-      let text = '🔥 *Moto Nzuri Field Report* 🔥\n\n';
-      merchants.forEach((m,i) => {
-        text += `${i+1}. ${m.name} | MN:${m.mn||'N/A'} | 📍 ${m.coords}\n   Status: ${m.status||'N/A'} | Branding: ${m.branding||'Pending'}\n\n`;
-      });
-      const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
-      logActivity('share_whatsapp', 'Shared merchant list via WhatsApp');
-      window.open(url, '_blank');
+      const list = getMerchants().map((m,i)=>`${i+1}. ${m.name} | MN:${m.mn||'N/A'} | ${m.coords}\n   ${m.status||''} | ${m.branding||'Pending'}`).join('\n\n');
+      window.open(`https://wa.me/?text=${encodeURIComponent('🔥 Moto Nzuri Report\n\n'+list)}`, '_blank');
+      logActivity('share_whatsapp');
     }
 
-    // ═══════════════════════════════════════
-    //  USERS TAB (ADMIN ONLY)
-    // ═══════════════════════════════════════
-    function renderUsersTab() {
-      const currentUser = getCurrentUser();
-      if (!currentUser || currentUser.role !== 'admin') return;
+    // ── USERS ──
+    function renderUsers() {
+      if(getCurrentUser()?.role!=='admin') return;
       const users = getUsers();
-      const tabContent = document.getElementById('tab-content');
-      let html = `
-        <div class="flex-row" style="justify-content:space-between;">
-          <h3>👥 User Management</h3>
-          <button id="add-user-btn" class="accent">➕ Add User</button>
-        </div>
-        <div class="table-wrapper mt-2">
-          <table>
-            <thead><tr><th>Username</th><th>Role</th><th>Pwd Changed</th><th>Actions</th></tr></thead>
-            <tbody>
-      `;
-      users.forEach(u => {
-        html += `<tr>
-          <td>${escapeHtml(u.username)}</td><td>${u.role}</td><td>${u.passwordChanged ? '✅' : '⚠️'}</td>
-          <td class="flex-row">
-            <button class="edit-user-btn" data-username="${u.username}">✏️</button>
-            ${u.username !== 'moto_admin' ? `<button class="delete-user-btn danger" data-username="${u.username}">🗑️</button>` : ''}
-          </td>
-        </tr>`;
+      document.getElementById('tab-content').innerHTML = `<div class="flex-row"><h3>👥 Users</h3><button id="add-user-btn" class="accent">➕ Add</button></div>
+        <div class="table-wrapper"><table><thead><tr><th>Username</th><th>Role</th><th>Pwd Changed</th><th></th></tr></thead><tbody>
+        ${users.map(u=>`<tr><td>${escapeHtml(u.username)}</td><td>${u.role}</td><td>${u.passwordChanged?'✅':'⚠️'}</td>
+        <td class="flex-row"><button class="edit-user" data-username="${u.username}">✏️</button>
+        ${u.username!=='moto_admin'?`<button class="delete-user danger" data-username="${u.username}">🗑️</button>`:''}</td></tr>`).join('')}
+        </tbody></table></div>`;
+      document.getElementById('add-user-btn').onclick = () => openUserModal();
+      document.querySelectorAll('.edit-user').forEach(b => b.onclick = () => {
+        const user = getUsers().find(u=>u.username===b.dataset.username); if(user) openUserModal(user);
       });
-      html += `</tbody></table></div>`;
-      tabContent.innerHTML = html;
-      document.getElementById('add-user-btn').addEventListener('click', () => openUserModal());
-      document.querySelectorAll('.edit-user-btn').forEach(b => b.addEventListener('click', (e) => {
-        const user = getUsers().find(u => u.username === e.target.dataset.username);
-        if (user) openUserModal(user);
-      }));
-      document.querySelectorAll('.delete-user-btn').forEach(b => b.addEventListener('click', (e) => {
-        const username = e.target.dataset.username;
-        if (confirm(`Delete user ${username}?`)) {
-          let users = getUsers().filter(u => u.username !== username);
-          saveUsers(users);
-          logActivity('delete_user', `Admin deleted user ${username}`);
-          renderUsersTab();
-        }
-      }));
+      document.querySelectorAll('.delete-user').forEach(b => b.onclick = () => {
+        if(confirm('Delete user?')) { const updated = getUsers().filter(u=>u.username!==b.dataset.username); saveUsers(updated); logActivity('delete_user',b.dataset.username); renderUsers(); }
+      });
     }
 
-    function openUserModal(user = null) {
-      const isEdit = !!user;
-      const modal = document.createElement('div');
-      modal.className = 'modal';
-      modal.innerHTML = `
-        <div class="modal-content">
-          <h3>${isEdit ? 'Edit' : 'Add'} User</h3>
-          <input type="text" id="user-username" placeholder="Phone/Username" value="${isEdit ? escapeAttr(user.username) : ''}" ${isEdit?'readonly':''}>
-          <select id="user-role"><option value="field" ${isEdit&&user.role==='field'?'selected':''}>Field Agent</option><option value="admin" ${isEdit&&user.role==='admin'?'selected':''}>Admin</option></select>
-          <input type="password" id="user-password" placeholder="New password (leave blank to keep)">
-          <div class="flex-row" style="justify-content:flex-end;margin-top:20px;">
-            <button id="cancel-user-modal">Cancel</button>
-            <button id="save-user-btn" class="accent">Save</button>
-          </div>
-        </div>
-      `;
+    function openUserModal(user=null) {
+      const modal = document.createElement('div'); modal.className='modal';
+      modal.innerHTML = `<div class="modal-content"><h3>${user?'Edit':'Add'} User</h3>
+        <input id="u-name" placeholder="Username" value="${user?escapeAttr(user.username):''}" ${user?'readonly':''}>
+        <select id="u-role"><option value="field" ${user&&user.role==='field'?'selected':''}>Field</option><option value="admin" ${user&&user.role==='admin'?'selected':''}>Admin</option></select>
+        <input type="password" id="u-pass" placeholder="New password (leave blank)">
+        <div class="flex-row" style="justify-content:flex-end;"><button id="cancel-user">Cancel</button><button id="save-user" class="accent">Save</button></div></div>`;
       document.body.appendChild(modal);
-      document.getElementById('cancel-user-modal').addEventListener('click', () => modal.remove());
-      document.getElementById('save-user-btn').addEventListener('click', async () => {
-        const username = document.getElementById('user-username').value.trim();
-        const role = document.getElementById('user-role').value;
-        const password = document.getElementById('user-password').value.trim();
-        if (!username) return showToast('Username required', true);
+      document.getElementById('cancel-user').onclick = () => modal.remove();
+      document.getElementById('save-user').onclick = async () => {
+        const username = document.getElementById('u-name').value.trim();
+        const role = document.getElementById('u-role').value;
+        const pass = document.getElementById('u-pass').value.trim();
+        if(!username) return showToast('Username required',true);
         let users = getUsers();
-        if (isEdit) {
-          const idx = users.findIndex(u => u.username === user.username);
-          if (idx !== -1) {
-            if (password) users[idx].password = await hashPassword(password);
-            users[idx].role = role;
-          }
+        if(user) {
+          const idx = users.findIndex(u=>u.username===user.username);
+          if(idx!==-1) { if(pass) users[idx].password = await hashPassword(pass); users[idx].role = role; }
         } else {
-          if (users.some(u => u.username === username)) return showToast('Username already exists', true);
-          const defaultHash = await hashPassword(password || DEFAULT_PASSWORD);
-          users.push({ username, password: defaultHash, role, passwordChanged: false });
+          if(users.some(u=>u.username===username)) return showToast('User exists',true);
+          users.push({ username, password: await hashPassword(pass||DEFAULT_PASS), role, passwordChanged:false });
         }
-        saveUsers(users);
-        logActivity(isEdit?'edit_user':'add_user', `User: ${username}`);
-        modal.remove();
-        renderUsersTab();
-        showToast('User saved');
-      });
+        saveUsers(users); logActivity(user?'edit_user':'add_user', username); modal.remove(); renderUsers(); showToast('Saved');
+      };
     }
 
-    // ═══════════════════════════════════════
-    //  LOGS TAB (ADMIN)
-    // ═══════════════════════════════════════
-    function renderLogsTab() {
+    function renderLogs() {
       const logs = getLogs().slice().reverse();
-      const tabContent = document.getElementById('tab-content');
-      let html = `<h3>📜 Activity Logs (last 500)</h3><div class="table-wrapper mt-2"><table>
-        <thead><tr><th>Time</th><th>User</th><th>Action</th><th>Details</th></tr></thead><tbody>`;
-      logs.forEach(l => {
-        html += `<tr><td>${new Date(l.timestamp).toLocaleString()}</td><td>${escapeHtml(l.user)}</td><td>${escapeHtml(l.action)}</td><td>${escapeHtml(l.details)}</td></tr>`;
-      });
-      html += `</tbody></table></div>`;
-      tabContent.innerHTML = html;
+      document.getElementById('tab-content').innerHTML = `<h3>📜 Activity Logs</h3><div class="table-wrapper"><table>
+        <thead><tr><th>Time</th><th>User</th><th>Action</th><th>Details</th></tr></thead><tbody>
+        ${logs.map(l=>`<tr><td>${new Date(l.timestamp).toLocaleString()}</td><td>${escapeHtml(l.user)}</td><td>${escapeHtml(l.action)}</td><td>${escapeHtml(l.details)}</td></tr>`).join('')}
+        </tbody></table></div>`;
     }
 
-    // ═══════════════════════════════════════
-    //  STARTUP
-    // ═══════════════════════════════════════
-    (async () => {
-      await initializeData();
-      const currentUser = getCurrentUser();
-      if (currentUser) {
-        resetSessionTimer();
-        renderMainApp();
-      } else {
-        renderLogin();
-      }
+    // ── START ──
+    (async ()=>{
+      await initData();
+      if(getCurrentUser()) { resetTimer(); renderMainApp(); } else renderLogin();
     })();
   })();
 </script>
