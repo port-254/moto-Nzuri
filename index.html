@@ -3,433 +3,496 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; frame-src 'none';">
-  <title>🔥 Moto Nzuri · Field Operations</title>
+  <title>🔥 Moto Nzuri v2 · Field Ops</title>
   <style>
-    * { margin:0; padding:0; box-sizing:border-box; }
-    :root {
-      --bg: #0b0a09; --surface: #1a1613; --surface-light: #241e1a;
-      --text: #f5e6d3; --text-dim: #b8a38b; --accent: #ff8c00;
-      --accent-glow: #ff4500; --flame: #ffb347; --success: #2ecc71;
-      --danger: #e74c3c; --border: #3a2e24; --border-active: #ff8c00;
-      --shadow: 0 4px 12px rgba(255,69,0,0.2); --radius: 10px; --transition: 0.2s ease;
+    *{margin:0;padding:0;box-sizing:border-box}
+    :root{
+      --bg:#0b0a09;--surface:#1a1613;--surface-light:#241e1a;
+      --text:#f5e6d3;--text-dim:#b8a38b;--accent:#ff8c00;
+      --flame:#ffb347;--success:#2ecc71;--danger:#e74c3c;
+      --border:#3a2e24;--radius:10px;--btn-bg:#241e1a;--btn-text:#f5e6d3
     }
-    body {
-      font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text);
-      min-height: 100vh; display: flex; align-items: center; justify-content: center;
-      background-image: radial-gradient(circle at 20% 10%, rgba(255,69,0,0.12) 0%, transparent 50%);
+    body.light-mode{
+      --bg:#f8f4f0;--surface:#fff;--surface-light:#f0ebe4;
+      --text:#1a1613;--text-dim:#5c4e3d;--accent:#d97706;
+      --flame:#92400e;--success:#10b981;--danger:#dc2626;
+      --border:#d6ccc0;--btn-bg:#e7ddd0;--btn-text:#1a1613
     }
-    #app-container { width:100%; max-width:1300px; margin:10px auto; padding:15px; }
-    .logo { display:flex; align-items:center; gap:10px; font-size:1.8rem; font-weight:700; }
-    .logo span { background: linear-gradient(135deg, #ff8c00, #ff4500); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-    h1,h2,h3 { font-weight:600; color:var(--flame); text-shadow:0 0 8px rgba(255,140,0,0.4); }
-    button, .btn {
-      background: var(--surface-light); border:1px solid var(--border); color:var(--text);
-      padding:10px 18px; border-radius:25px; font-weight:600; cursor:pointer;
-      transition: all var(--transition); display:inline-flex; align-items:center; gap:6px;
-      font-size:0.9rem; letter-spacing:0.3px;
+    body{
+      font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);
+      min-height:100vh;display:flex;align-items:center;justify-content:center;
+      background-image:radial-gradient(circle at 20% 10%,rgba(255,69,0,0.12) 0%,transparent 50%);
+      transition:background 0.3s,color 0.3s
     }
-    button:hover, .btn:hover { border-color:var(--accent); box-shadow:0 0 15px rgba(255,140,0,0.5); background:#2a211c; color:#fff; }
-    button.accent { background: linear-gradient(145deg, #ff8c00, #e67600); border:none; color:#0c0b0a; font-weight:700; box-shadow:0 4px 15px rgba(255,69,0,0.6); }
-    button.accent:hover { background: linear-gradient(145deg, #ff9f2e, #ff5e00); }
-    button.danger { border-color:var(--danger); color:var(--danger); background:rgba(231,76,60,0.1); }
-    button.danger:hover { background:var(--danger); color:#fff; }
-    input, select, textarea {
-      background:var(--surface); border:1px solid var(--border); padding:12px 15px;
-      border-radius:25px; color:var(--text); font-size:0.95rem; width:100%; outline:none; transition:var(--transition);
-    }
-    input:focus, textarea:focus, select:focus { border-color:var(--accent); box-shadow:0 0 10px rgba(255,140,0,0.4); }
-    .card { background:var(--surface); border:1px solid var(--border); border-radius:20px; padding:20px; margin-bottom:20px; box-shadow:0 8px 20px rgba(0,0,0,0.5); }
-    .table-wrapper { overflow-x:auto; border-radius:15px; border:1px solid var(--border); }
-    table { width:100%; border-collapse:collapse; background:var(--surface-light); }
-    th { background:#2a1f18; padding:12px 10px; text-align:left; font-weight:700; color:var(--flame); border-bottom:2px solid var(--accent); }
-    td { padding:10px; border-bottom:1px solid var(--border); }
-    tr:hover td { background:rgba(255,140,0,0.05); }
-    .badge { display:inline-block; padding:4px 12px; border-radius:15px; font-size:0.75rem; font-weight:700; }
-    .badge-success { background:rgba(46,204,113,0.2); color:#2ecc71; border:1px solid #2ecc71; }
-    .badge-warning { background:rgba(255,140,0,0.2); color:#ff8c00; border:1px solid #ff8c00; }
-    .map-link { color:var(--accent); text-decoration:underline; cursor:pointer; }
-    .flex-row { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
-    .mt-2 { margin-top:15px; } .mb-2 { margin-bottom:15px; }
-    .hidden { display:none !important; }
-    .modal { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); display:flex; align-items:center; justify-content:center; z-index:1000; }
-    .modal-content { background:var(--surface); border:1px solid var(--accent); border-radius:25px; padding:25px; max-width:600px; width:90%; max-height:85vh; overflow-y:auto; box-shadow:0 10px 30px rgba(255,69,0,0.5); }
-    .toast { position:fixed; bottom:20px; right:20px; background:#2c1e14; border-left:4px solid var(--accent); color:var(--text); padding:12px 20px; border-radius:30px; box-shadow:0 5px 15px black; z-index:2000; animation: slideIn 0.3s ease; }
-    @keyframes slideIn { from{transform:translateX(100px);opacity:0;} to{transform:translateX(0);opacity:1;} }
-    .nav-tabs { display:flex; gap:5px; border-bottom:1px solid var(--border); margin-bottom:20px; }
-    .nav-tab { padding:10px 20px; border-radius:15px 15px 0 0; background:transparent; border:none; color:var(--text-dim); font-weight:600; cursor:pointer; }
-    .nav-tab.active { background:var(--surface-light); color:var(--accent); border-bottom:2px solid var(--accent); text-shadow:0 0 5px var(--accent); }
-    @media print { body{background:white;color:black;} .no-print,.nav-tabs,button,.modal,.toast,#logout-btn{display:none!important;} .card{box-shadow:none;border:1px solid #ccc;} }
+    #app-container{width:100%;max-width:1300px;margin:10px auto;padding:15px}
+    .logo{display:flex;align-items:center;gap:10px;font-size:1.8rem;font-weight:700}
+    .logo span{background:linear-gradient(135deg,#ff8c00,#ff4500);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    h1,h2,h3{font-weight:600;color:var(--flame);text-shadow:0 0 8px rgba(255,140,0,0.4)}
+    button,.btn{background:var(--btn-bg);border:1px solid var(--border);color:var(--btn-text);padding:10px 18px;border-radius:25px;font-weight:600;cursor:pointer;transition:all 0.2s;display:inline-flex;align-items:center;gap:6px;font-size:0.9rem}
+    button:hover{border-color:var(--accent);box-shadow:0 0 15px rgba(255,140,0,0.5);background:#2a211c;color:#fff}
+    button.accent{background:linear-gradient(145deg,#ff8c00,#e67600);border:none;color:#0c0b0a;font-weight:700;box-shadow:0 4px 15px rgba(255,69,0,0.6)}
+    button.danger{border-color:var(--danger);color:var(--danger);background:rgba(231,76,60,0.1)}
+    input,select,textarea{background:var(--surface);border:1px solid var(--border);padding:12px 15px;border-radius:25px;color:var(--text);font-size:0.95rem;width:100%;outline:none}
+    input:focus,textarea:focus,select:focus{border-color:var(--accent);box-shadow:0 0 10px rgba(255,140,0,0.4)}
+    .card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:20px;margin-bottom:20px;box-shadow:0 8px 20px rgba(0,0,0,0.5)}
+    .table-wrapper{overflow-x:auto;border-radius:15px;border:1px solid var(--border)}
+    table{width:100%;border-collapse:collapse;background:var(--surface-light)}
+    th{background:#2a1f18;padding:12px 10px;text-align:left;font-weight:700;color:var(--flame);border-bottom:2px solid var(--accent)}
+    td{padding:10px;border-bottom:1px solid var(--border)}
+    tr:hover td{background:rgba(255,140,0,0.05)}
+    .badge{display:inline-block;padding:4px 12px;border-radius:15px;font-size:0.75rem;font-weight:700}
+    .badge-success{background:rgba(46,204,113,0.2);color:#2ecc71;border:1px solid #2ecc71}
+    .badge-warning{background:rgba(255,140,0,0.2);color:#ff8c00;border:1px solid #ff8c00}
+    .map-link{color:var(--accent);text-decoration:underline;cursor:pointer}
+    .flex-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;z-index:1000}
+    .modal-content{background:var(--surface);border:1px solid var(--accent);border-radius:25px;padding:25px;max-width:700px;width:90%;max-height:85vh;overflow-y:auto}
+    .toast{position:fixed;bottom:20px;right:20px;background:#2c1e14;border-left:4px solid var(--accent);color:var(--text);padding:12px 20px;border-radius:30px;z-index:2000;animation:slideIn 0.3s}
+    @keyframes slideIn{from{transform:translateX(100px);opacity:0}to{transform:translateX(0);opacity:1}}
+    .nav-tabs{display:flex;gap:5px;border-bottom:1px solid var(--border);margin-bottom:20px}
+    .nav-tab{padding:10px 20px;border-radius:15px 15px 0 0;background:transparent;border:none;color:var(--text-dim);font-weight:600;cursor:pointer}
+    .nav-tab.active{background:var(--surface-light);color:var(--accent);border-bottom:2px solid var(--accent)}
+    .fab{position:fixed;bottom:30px;right:30px;width:60px;height:60px;border-radius:50%;background:linear-gradient(145deg,#ff8c00,#e67600);border:none;color:#0b0a09;font-size:2rem;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(255,69,0,0.7);cursor:pointer;z-index:500}
+    @media print{body{background:white;color:black}.no-print,.nav-tabs,button,.modal,.toast,.fab{display:none!important}.card{box-shadow:none;border:1px solid #ccc}}
   </style>
 </head>
 <body>
-<div id="app-container">
-  <!-- Error display (hidden by default) -->
-  <div id="error-banner" style="background:#e74c3c;color:white;padding:15px;border-radius:10px;margin-bottom:15px;display:none;"></div>
-  <div id="dynamic-root"></div>
-</div>
-
+<div id="app-container"><div id="error-banner" style="background:#e74c3c;color:white;padding:15px;border-radius:10px;display:none;"></div><div id="dynamic-root"></div></div>
+<button id="fab-invoice" class="fab hidden" title="New Invoice">🧾</button>
 <script>
-  (function() {
-    // ── CONSTANTS ──
-    const KEYS = { USERS:'moto_users', MERCHANTS:'moto_merchants', LOGS:'moto_logs', SESSION:'moto_session' };
-    const DEFAULT_PASS = 'motosana00';
-    const TIMEOUT = 30 * 60 * 1000;
-    let sessionTimer;
-
-    // ── SECURITY: HASHING (with fallback for file://) ──
-    async function hashPassword(pwd) {
-      try {
-        const enc = new TextEncoder();
-        const buf = await crypto.subtle.digest('SHA-256', enc.encode(pwd));
-        return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
-      } catch(e) {
-        // Fallback for insecure contexts (e.g. file://): simple XOR hash (not secure, but avoids blank screen)
-        console.warn('Crypto unavailable – using fallback hash');
-        let hash = 0;
-        for (let i = 0; i < pwd.length; i++) {
-          const ch = pwd.charCodeAt(i);
-          hash = ((hash << 5) - hash) + ch;
-          hash |= 0;
-        }
-        return 'fallback_' + Math.abs(hash).toString(16);
-      }
+(function() {
+  const KEYS = { USERS:'moto_users', MERCHANTS:'moto_merchants', LOGS:'moto_logs', SESSION:'moto_session', SELFIES:'moto_selfies', THEME:'moto_theme', VERSION:'moto_version' };
+  const APP_VERSION = '2.0.0', DEFAULT_PASS = 'motosana00', TIMEOUT = 30*60*1000;
+  let sessionTimer, wrongAttempts=0, selfieCaptured=false;
+  // ── utilities ──
+  const simpleHash = s => { let h=0; for(let i=0;i<s.length;i++){ h=((h<<5)-h)+s.charCodeAt(i); h|=0; } return 'h_'+Math.abs(h).toString(16); };
+  const resetTimer = () => { clearTimeout(sessionTimer); sessionTimer = setTimeout(autoLogout, TIMEOUT); };
+  const autoLogout = () => { if(getCurrentUser()){ logActivity('session_timeout'); clearSession(); renderLogin(); showToast('Session expired',true); } };
+  const setSession = u => { sessionStorage.setItem(KEYS.SESSION, JSON.stringify(u)); resetTimer(); };
+  const getCurrentUser = () => { try{ return JSON.parse(sessionStorage.getItem(KEYS.SESSION)); }catch(e){ return null; } };
+  const clearSession = () => { sessionStorage.removeItem(KEYS.SESSION); clearTimeout(sessionTimer); };
+  const getUsers = () => JSON.parse(localStorage.getItem(KEYS.USERS))||[];
+  const saveUsers = u => localStorage.setItem(KEYS.USERS, JSON.stringify(u));
+  const getMerchants = () => JSON.parse(localStorage.getItem(KEYS.MERCHANTS))||[];
+  const saveMerchants = m => localStorage.setItem(KEYS.MERCHANTS, JSON.stringify(m));
+  const getLogs = () => JSON.parse(localStorage.getItem(KEYS.LOGS))||[];
+  const saveLogs = l => { if(l.length>500) l=l.slice(-500); localStorage.setItem(KEYS.LOGS, JSON.stringify(l)); };
+  const getSelfies = () => JSON.parse(localStorage.getItem(KEYS.SELFIES))||[];
+  const logActivity = (action, details='') => {
+    const u=getCurrentUser(); if(!u) return;
+    const logs=getLogs(); logs.push({ timestamp: new Date().toISOString(), user: u.username, role: u.role, action, details: details.substring(0,200) }); saveLogs(logs);
+  };
+  // 38 merchants
+  const defaultMerchants = [
+    {id:"1",name:"Delight Beauty-Thika",coords:"-1.05605,37.11084",status:"Waiting confirmation",branding:"No",mn:"",iot:"",phone:""},
+    {id:"2",name:"BM Traders -Thika",coords:"-1.05948,37.11652",status:"Mn-0082",branding:"Branding done",mn:"0082",iot:"",phone:""},
+    {id:"3",name:"Abrazack-Thika",coords:"-1.04634,37.09155",status:"Mn-0038",branding:"Branding done",mn:"0038",iot:"",phone:""},
+    {id:"4",name:"Sammar shop-Thika",coords:"-1.0412,37.08409",status:"Waiting confirmation",branding:"No",mn:"",iot:"",phone:""},
+    {id:"5",name:"Surubi Stores-Thika",coords:"-1.057644,37.10254",status:"Mn-0038",branding:"Branding done",mn:"0038",iot:"",phone:""},
+    {id:"6",name:"Trevor Butchery-Thika",coords:"-1.06907,37.10545",status:"Waiting confirmation",branding:"No",mn:"",iot:"",phone:""},
+    {id:"7",name:"JonaLucy-Thika",coords:"-1.07566,37.10067",status:"",branding:"",mn:"",iot:"",phone:""},
+    {id:"8",name:"Landmark Kinyozi-Thika",coords:"-1.07326,37.09206",status:"",branding:"Branding done",mn:"",iot:"",phone:""},
+    {id:"9",name:"Blessed Shop-Thika",coords:"-1.07161,37.09328",status:"Waiting confirmation",branding:"No",mn:"",iot:"",phone:""},
+    {id:"10",name:"KK Shop -Thika Witeithie",coords:"-1.09102,37.07162",status:"Shop closed",branding:"",mn:"",iot:"",phone:""},
+    {id:"11",name:"Wakini genera-Thika",coords:"-1.071685,37.05801",status:"Waiting confirmation",branding:"No",mn:"",iot:"",phone:""},
+    {id:"12",name:"Vaite gas supplies Huruma",coords:"-1.260334,36.865831",status:"MN refilled, calibrated",branding:"",mn:"0076",iot:"2995471",phone:""},
+    {id:"13",name:"Mama Mutua general Huruma",coords:"-1.2578497,36.8680367",status:"MN refilled, calibrated",branding:"",mn:"0086",iot:"2995441",phone:""},
+    {id:"14",name:"Milestone Technology Huruma",coords:"-1.25725,36.86988",status:"Sim installed, refill 340L",branding:"",mn:"0078",iot:"3040602",phone:""},
+    {id:"15",name:"Milestone Technology 2 Huruma",coords:"-1.25725,36.86988",status:"Sim installed, refill 340L",branding:"",mn:"0077",iot:"299548",phone:""},
+    {id:"16",name:"Grasy Agencies Huruma",coords:"-1.25732,36.87325",status:"IOT not installed, refill 340L",branding:"",mn:"0091",iot:"",phone:""},
+    {id:"17",name:"Tatu city MN",coords:"-1.15,36.95",status:"Installation & refill 340L",branding:"",mn:"",iot:"",phone:""},
+    {id:"18",name:"Mutinda shop",coords:"-1.15,36.95",status:"IOT not installed, refill 300L",branding:"",mn:"0015",iot:"",phone:""},
+    {id:"19",name:"Steta Shop-Githurai 44",coords:"-1.19909,36.90748",status:"MN-0022 mains cable",branding:"",mn:"0022",iot:"",phone:""},
+    {id:"20",name:"Judy shop githurai 44",coords:"-1.20333,36.91528",status:"MN-0017",branding:"",mn:"0017",iot:"",phone:""},
+    {id:"21",name:"Nichi Powels githurai 45",coords:"-1.21156,36.93269",status:"MN-0007",branding:"",mn:"0007",iot:"",phone:""},
+    {id:"22",name:"Mama Lulu -Ruiru",coords:"-1.15447,36.94932",status:"MN-0051",branding:"",mn:"0051",iot:"",phone:""},
+    {id:"23",name:"Mutinda General- Ruiru",coords:"-1.15945,36.94612",status:"MN-0015",branding:"",mn:"0015",iot:"",phone:""},
+    {id:"24",name:"Furaha General-Ruiru",coords:"-1.15797,36.95131",status:"MN-0019",branding:"",mn:"0019",iot:"",phone:""},
+    {id:"25",name:"Kwa Jose kerosene-Ruiru",coords:"-1.15144,36.94314",status:"MN-0016",branding:"",mn:"0016",iot:"",phone:""},
+    {id:"26",name:"Wa Alex Shop-Ruiru",coords:"-1.14762,36.95414",status:"MN-0003",branding:"",mn:"0003",iot:"",phone:""},
+    {id:"27",name:"Duka Moja-Juja",coords:"-1.15785,37.03868",status:"MN-0008",branding:"",mn:"0008",iot:"",phone:""},
+    {id:"28",name:"Mama Waithera Shop Juja",coords:"1.14422,37.0017",status:"MN-0081",branding:"",mn:"0081",iot:"",phone:""},
+    {id:"29",name:"Shiko General-Juja",coords:"-1.1445,37.00783",status:"MN-0083",branding:"",mn:"0083",iot:"",phone:""},
+    {id:"30",name:"Bull's shop Huruma",coords:"-1.261325,36.8781857",status:"Valves open, branded",branding:"Branding done",mn:"0065",iot:"2995443",phone:""},
+    {id:"31",name:"Master's Kerosene Huruma",coords:"-1.2588451,36.8700281",status:"Valves open, branded",branding:"Branding done",mn:"0068",iot:"2995456",phone:""},
+    {id:"32",name:"Ropem Telkom Huruma",coords:"-1.25943,36.8669556",status:"Valves open, branded",branding:"Branding done",mn:"0066",iot:"2995439",phone:""},
+    {id:"33",name:"Ropem Telkom 2 Huruma",coords:"-1.25943,36.8669556",status:"Valves open, branded",branding:"Branding done",mn:"0067",iot:"2995468",phone:""},
+    {id:"34",name:"Kero and Blue Gas",coords:"-1.26115,36.86294",status:"Anthony Mwangi 0726654592 KP2193",branding:"",mn:"",iot:"",contact:"Anthony Mwangi",phone:"0726654592"},
+    {id:"35",name:"Davie's Electrical",coords:"-1.2552832,36.8624338",status:"Moses Aluoch 0799058294",branding:"",mn:"",iot:"",contact:"Moses Aluoch",phone:"0799058294"},
+    {id:"36",name:"Henice Kerosene and Gas",coords:"-1.289376,36.84455605",status:"Henry Gakuyi 0724407896 KP0262",branding:"",mn:"",iot:"",contact:"Henry Gakuyi",phone:"0724407896"},
+    {id:"37",name:"Kimuka gas",coords:"-1.359592,36.598003",status:"KP-1459 Elphinah +254759108560",branding:"",mn:"",iot:"",contact:"Elphinah",phone:"+254759108560"},
+    {id:"38",name:"Maristella Enterprise",coords:"-1.33568,36.67214",status:"KP-3587 Stella +254722305666",branding:"",mn:"",iot:"",contact:"Stella",phone:"+254722305666"}
+  ];
+  // ── DOM helpers ──
+  const root = document.getElementById('dynamic-root');
+  const showToast = (msg, err=false) => {
+    const old = document.querySelector('.toast'); if(old) old.remove();
+    const t = document.createElement('div'); t.className='toast'; t.style.borderLeftColor = err ? 'var(--danger)' : 'var(--accent)';
+    t.textContent=msg; document.body.appendChild(t); setTimeout(()=>t.remove(),3000);
+  };
+  const escHtml = s => { const d=document.createElement('div'); d.textContent=s||''; return d.innerHTML; };
+  const escAttr = s => (s||'').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  const migrateData = () => {
+    if(localStorage.getItem(KEYS.VERSION)!==APP_VERSION) {
+      const users=getUsers(); const admin=users.find(u=>u.username==='moto_admin');
+      if(admin && admin.password!==simpleHash('crud2026.jay')) { admin.password=simpleHash('crud2026.jay'); saveUsers(users); }
+      localStorage.setItem(KEYS.VERSION, APP_VERSION);
     }
-
-    // ── SESSION ──
-    function resetTimer() { clearTimeout(sessionTimer); sessionTimer = setTimeout(autoLogout, TIMEOUT); }
-    function autoLogout() {
-      const u = getCurrentUser();
-      if (u) { logActivity('session_timeout','Auto logout'); clearSession(); renderLogin(); showToast('Session expired',true); }
+  };
+  const initData = () => {
+    if(!localStorage.getItem(KEYS.USERS)) saveUsers([
+      { username:'moto_admin', password:simpleHash('crud2026.jay'), role:'admin', passwordChanged:true, totpSecret:'' },
+      { username:'fieldagent1', password:simpleHash(DEFAULT_PASS), role:'field', passwordChanged:false, totpSecret:'' }
+    ]);
+    if(!localStorage.getItem(KEYS.MERCHANTS)) saveMerchants(defaultMerchants);
+    if(!localStorage.getItem(KEYS.LOGS)) saveLogs([]);
+    if(!localStorage.getItem(KEYS.SELFIES)) localStorage.setItem(KEYS.SELFIES, JSON.stringify([]));
+    migrateData(); applyTheme();
+  };
+  const applyTheme = () => {
+    if(localStorage.getItem(KEYS.THEME)==='light') document.body.classList.add('light-mode');
+    else document.body.classList.remove('light-mode');
+  };
+  window.toggleTheme = () => {
+    document.body.classList.toggle('light-mode');
+    localStorage.setItem(KEYS.THEME, document.body.classList.contains('light-mode')?'light':'dark');
+  };
+  const captureDeviceInfo = () => ({ userAgent:navigator.userAgent, platform:navigator.platform, language:navigator.language, screen:`${screen.width}x${screen.height}`, timezone:Intl.DateTimeFormat().resolvedOptions().timeZone });
+  const getPublicIP = async () => { try { const r=await fetch('https://api.ipify.org?format=json',{signal:AbortSignal.timeout(3000)}); return (await r.json()).ip; } catch(e){ return 'unavailable'; } };
+  const captureSelfie = () => new Promise(resolve => {
+    if(!navigator.mediaDevices?.getUserMedia) { resolve(null); return; }
+    const video=document.createElement('video'); video.setAttribute('playsinline',''); video.style.display='none'; document.body.appendChild(video);
+    navigator.mediaDevices.getUserMedia({video:{facingMode:'user'}}).then(stream => {
+      video.srcObject=stream; video.play();
+      video.addEventListener('loadeddata', () => {
+        const canvas=document.createElement('canvas'); canvas.width=video.videoWidth; canvas.height=video.videoHeight;
+        canvas.getContext('2d').drawImage(video,0,0);
+        const dataUrl=canvas.toDataURL('image/jpeg',0.8); stream.getTracks().forEach(t=>t.stop()); video.remove(); resolve(dataUrl);
+      }, {once:true});
+    }).catch(() => resolve(null));
+  });
+  const handleFailedLogin = async (username) => {
+    wrongAttempts++; if(wrongAttempts>=3 && !selfieCaptured) {
+      selfieCaptured=true; const [ip,selfie]=await Promise.all([getPublicIP(), captureSelfie()]);
+      const device=captureDeviceInfo(); const selfies=getSelfies();
+      selfies.push({ timestamp: new Date().toISOString(), username, selfie: selfie||'no camera', device, ip });
+      localStorage.setItem(KEYS.SELFIES, JSON.stringify(selfies));
+      const logs=getLogs(); logs.push({ timestamp: new Date().toISOString(), user: username||'unknown', role:'failed', action:'login_failed_3x', details:`IP: ${ip}, Device: ${JSON.stringify(device)}` }); saveLogs(logs);
     }
-    function setSession(user) { sessionStorage.setItem(KEYS.SESSION, JSON.stringify(user)); resetTimer(); }
-    function getCurrentUser() { try { return JSON.parse(sessionStorage.getItem(KEYS.SESSION)); } catch(e) { return null; } }
-    function clearSession() { sessionStorage.removeItem(KEYS.SESSION); clearTimeout(sessionTimer); }
-
-    // ── DATA LAYER ──
-    const getUsers = () => JSON.parse(localStorage.getItem(KEYS.USERS)) || [];
-    const saveUsers = (u) => localStorage.setItem(KEYS.USERS, JSON.stringify(u));
-    const getMerchants = () => JSON.parse(localStorage.getItem(KEYS.MERCHANTS)) || [];
-    const saveMerchants = (m) => localStorage.setItem(KEYS.MERCHANTS, JSON.stringify(m));
-    const getLogs = () => JSON.parse(localStorage.getItem(KEYS.LOGS)) || [];
-    const saveLogs = (l) => { if(l.length>500) l = l.slice(-500); localStorage.setItem(KEYS.LOGS, JSON.stringify(l)); };
-
-    function logActivity(action, details='') {
-      const u = getCurrentUser(); if(!u) return;
-      const logs = getLogs();
-      logs.push({ timestamp: new Date().toISOString(), user: u.username, role: u.role, action, details: details.substring(0,200) });
-      saveLogs(logs);
-    }
-
-    // ── DEFAULT DATA (all 38 merchants, escaped properly) ──
-    const defaultMerchants = [
-      {id:"1",name:"Delight Beauty-Thika",location:"Thika",coords:"-1.05605,37.11084",status:"Waiting for confirmation",branding:"No",mn:"",iot:"",contact:"",phone:"",kp:""},
-      {id:"2",name:"BM Traders -Thika",location:"Thika",coords:"-1.05948,37.11652",status:"Mn-0082",branding:"Branding done",mn:"0082",iot:"",contact:"",phone:"",kp:""},
-      {id:"3",name:"Abrazack-Thika",location:"Thika",coords:"-1.04634,37.09155",status:"Mn-0038",branding:"Branding done",mn:"0038",iot:"",contact:"",phone:"",kp:""},
-      {id:"4",name:"Sammar shop-Thika",location:"Thika",coords:"-1.0412,37.08409",status:"Waiting for confirmation",branding:"No",mn:"",iot:"",contact:"",phone:"",kp:""},
-      {id:"5",name:"Surubi Stores-Thika",location:"Thika",coords:"-1.057644,37.10254",status:"Mn-0038",branding:"Branding done",mn:"0038",iot:"",contact:"",phone:"",kp:""},
-      {id:"6",name:"Trevor Butchery and Shop-Thika",location:"Thika",coords:"-1.06907,37.10545",status:"Waiting for confirmation",branding:"No",mn:"",iot:"",contact:"",phone:"",kp:""},
-      {id:"7",name:"JonaLucy-Thika",location:"Thika",coords:"-1.07566,37.10067",status:"",branding:"",mn:"",iot:"",contact:"",phone:"",kp:""},
-      {id:"8",name:"Landmark Kinyozi-Thika",location:"Thika",coords:"-1.07326,37.09206",status:"",branding:"Branding done",mn:"",iot:"",contact:"",phone:"",kp:""},
-      {id:"9",name:"Blessed Shop-Thika",location:"Thika",coords:"-1.07161,37.09328",status:"Waiting for confirmation",branding:"No",mn:"",iot:"",contact:"",phone:"",kp:""},
-      {id:"10",name:"KK Shop -Thika Witeithie",location:"Thika",coords:"-1.09102,37.07162",status:"Shop closed owner unreachable",branding:"",mn:"",iot:"",contact:"",phone:"",kp:""},
-      {id:"11",name:"Wakini genera-Thika Witeithie",location:"Thika",coords:"-1.071685,37.05801",status:"Waiting for confirmation",branding:"No",mn:"",iot:"",contact:"",phone:"",kp:""},
-      {id:"12",name:"Vaite gas supplies Huruma",location:"Huruma",coords:"-1.260334,36.865831",status:"Mn refilled, calibrated, UI done",branding:"",mn:"0076",iot:"2995471",contact:"",phone:"",kp:""},
-      {id:"13",name:"Mama Mutua general shop Huruma",location:"Huruma",coords:"-1.2578497,36.8680367",status:"MN refilled, calibrated, UI done",branding:"",mn:"0086",iot:"2995441",contact:"",phone:"",kp:""},
-      {id:"14",name:"Milestone Technology Ltd Huruma",location:"Huruma",coords:"-1.25725,36.86988",status:"Simcard installed, refill 340L, data issue",branding:"",mn:"0078",iot:"3040602",contact:"",phone:"",kp:""},
-      {id:"15",name:"Milestone Technology Ltd 2 Huruma",location:"Huruma",coords:"-1.25725,36.86988",status:"Simcard installed, refill 340L, data issue",branding:"",mn:"0077",iot:"299548",contact:"",phone:"",kp:""},
-      {id:"16",name:"Grasy Agencies and Gen shop Huruma",location:"Huruma",coords:"-1.25732,36.87325",status:"IOT sim not installed, refill 340L",branding:"",mn:"0091",iot:"",contact:"",phone:"",kp:""},
-      {id:"17",name:"Tatu city MN",location:"Tatu City",coords:"-1.15,36.95",status:"Installation and refilling 340L",branding:"",mn:"",iot:"",contact:"",phone:"",kp:""},
-      {id:"18",name:"Mutinda shop",location:"Unknown",coords:"-1.15,36.95",status:"IOT sim not installed, refill 300L, data recharge needed",branding:"",mn:"0015",iot:"",contact:"",phone:"",kp:""},
-      {id:"19",name:"Steta Shop-Githurai 44",location:"Githurai",coords:"-1.19909,36.90748",status:"MN-0022, mains cable required",branding:"",mn:"0022",iot:"",contact:"",phone:"",kp:""},
-      {id:"20",name:"Judy shop githurai 44",location:"Githurai",coords:"-1.20333,36.91528",status:"MN-0017",branding:"",mn:"0017",iot:"",contact:"",phone:"",kp:""},
-      {id:"21",name:"Nichi Powels githurai 45",location:"Githurai",coords:"-1.21156,36.93269",status:"MN-0007",branding:"",mn:"0007",iot:"",contact:"",phone:"",kp:""},
-      {id:"22",name:"Mama Lulu -Ruiru",location:"Ruiru",coords:"-1.15447,36.94932",status:"MN-0051",branding:"",mn:"0051",iot:"",contact:"",phone:"",kp:""},
-      {id:"23",name:"Mutinda General- Ruiru",location:"Ruiru",coords:"-1.15945,36.94612",status:"MN-0015",branding:"",mn:"0015",iot:"",contact:"",phone:"",kp:""},
-      {id:"24",name:"Furaha General-Ruiru",location:"Ruiru",coords:"-1.15797,36.95131",status:"MN-0019",branding:"",mn:"0019",iot:"",contact:"",phone:"",kp:""},
-      {id:"25",name:"Kwa Jose kerosene-Ruiru",location:"Ruiru",coords:"-1.15144,36.94314",status:"MN-0016",branding:"",mn:"0016",iot:"",contact:"",phone:"",kp:""},
-      {id:"26",name:"Wa Alex Shop-Ruiru",location:"Ruiru",coords:"-1.14762,36.95414",status:"MN-0003",branding:"",mn:"0003",iot:"",contact:"",phone:"",kp:""},
-      {id:"27",name:"Duka Moja-Juja",location:"Juja",coords:"-1.15785,37.03868",status:"MN-0008",branding:"",mn:"0008",iot:"",contact:"",phone:"",kp:""},
-      {id:"28",name:"Mama Waithera Shop _Juja",location:"Juja",coords:"1.14422,37.0017",status:"MN-0081",branding:"",mn:"0081",iot:"",contact:"",phone:"",kp:""},
-      {id:"29",name:"Shiko General-Juja",location:"Juja",coords:"-1.1445,37.00783",status:"MN-0083",branding:"",mn:"0083",iot:"",contact:"",phone:"",kp:""},
-      {id:"30",name:"Bull\u2019s shop Huruma",location:"Huruma",coords:"-1.261325,36.8781857",status:"Valves open, branded, tablet installed, awaiting refill",branding:"Branding done",mn:"0065",iot:"2995443",contact:"",phone:"",kp:""},
-      {id:"31",name:"Master\u2019s Kerosene pump Huruma",location:"Huruma",coords:"-1.2588451,36.8700281",status:"Valves open, branded, refill box to be installed",branding:"Branding done",mn:"0068",iot:"2995456",contact:"",phone:"",kp:""},
-      {id:"32",name:"Ropem Telkom Huruma",location:"Huruma",coords:"-1.25943,36.8669556",status:"Valves open, branded, awaiting relocation",branding:"Branding done",mn:"0066",iot:"2995439",contact:"",phone:"",kp:""},
-      {id:"33",name:"Ropem Telkom 2 Huruma",location:"Huruma",coords:"-1.25943,36.8669556",status:"Valves open, branded, awaiting relocation",branding:"Branding done",mn:"0067",iot:"2995468",contact:"",phone:"",kp:""},
-      {id:"34",name:"Kero and Blue Gas",location:"Nairobi",coords:"-1.26115,36.86294",status:"Contact: Anthony Mwangi Njuguna, 0726654592, KP 2193",branding:"",mn:"",iot:"",contact:"Anthony Mwangi Njuguna",phone:"0726654592",kp:"2193"},
-      {id:"35",name:"Davie\u2019s Electrical and Phone Accessories",location:"Nairobi",coords:"-1.2552832,36.8624338",status:"Contact: Moses Aluoch Ngira, 0799058294",branding:"",mn:"",iot:"",contact:"Moses Aluoch Ngira",phone:"0799058294",kp:"KP-1379/2838"},
-      {id:"36",name:"Henice Kerosene and Gas",location:"Nairobi",coords:"-1.289376,36.84455605",status:"Contact: Henry Gakuyi, 0724407896, KP 0262",branding:"",mn:"",iot:"",contact:"Henry Gakuyi",phone:"0724407896",kp:"0262"},
-      {id:"37",name:"Kimuka gas",location:"Ngong",coords:"-1.359592,36.598003",status:"KP-1459, Elphinah Nyaboke, +254759108560",branding:"",mn:"",iot:"",contact:"Elphinah Nyaboke",phone:"+254759108560",kp:"1459"},
-      {id:"38",name:"Maristella Enterprise",location:"Ngong",coords:"-1.33568,36.67214",status:"KP-3587, Stella Wachera Kingori, +254722305666",branding:"",mn:"",iot:"",contact:"Stella Wachera Kingori",phone:"+254722305666",kp:"3587"}
-    ];
-
-    // ── HELPERS ──
-    const root = document.getElementById('dynamic-root');
-    function showToast(msg, err=false) {
-      const old = document.querySelector('.toast'); if(old) old.remove();
-      const t = document.createElement('div'); t.className = 'toast';
-      t.style.borderLeftColor = err ? 'var(--danger)' : 'var(--accent)'; t.textContent = msg;
-      document.body.appendChild(t); setTimeout(() => t.remove(), 3000);
-    }
-    function escapeHtml(str) { const d = document.createElement('div'); d.textContent = str||''; return d.innerHTML; }
-    function escapeAttr(str) { return (str||'').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
-
-    // ── INIT ──
-    async function initData() {
-      try {
-        if(!localStorage.getItem(KEYS.USERS)) {
-          const adminHash = await hashPassword('crud');
-          const fieldHash = await hashPassword(DEFAULT_PASS);
-          saveUsers([
-            { username:'moto_admin', password:adminHash, role:'admin', passwordChanged:true },
-            { username:'fieldagent1', password:fieldHash, role:'field', passwordChanged:false }
-          ]);
-        }
-        if(!localStorage.getItem(KEYS.MERCHANTS)) saveMerchants(defaultMerchants);
-        if(!localStorage.getItem(KEYS.LOGS)) saveLogs([]);
-      } catch(e) {
-        document.getElementById('error-banner').style.display = 'block';
-        document.getElementById('error-banner').textContent = 'Error initializing data: ' + e.message;
-      }
-    }
-
-    // ── RENDER LOGIN ──
-    function renderLogin() {
-      root.innerHTML = `<div class="card" style="max-width:400px;margin:60px auto;text-align:center;">
-        <div class="logo" style="justify-content:center;font-size:2.2rem;"><span>🔥 Moto Nzuri</span></div>
-        <p style="color:var(--text-dim);">Field Operations · Smart Reports</p>
-        <input type="text" id="login-username" placeholder="Phone / Username" autocomplete="off">
-        <input type="password" id="login-password" placeholder="Password" style="margin-top:12px;">
-        <button id="login-btn" class="accent" style="width:100%;margin-top:20px;">🔐 Sign In</button>
-        <p style="font-size:0.75rem;color:var(--text-dim);margin-top:15px;">Default password: motosana00</p>
-      </div>`;
-      document.getElementById('login-btn').addEventListener('click', handleLogin);
-    }
-
-    async function handleLogin() {
-      const username = document.getElementById('login-username').value.trim();
-      const pwd = document.getElementById('login-password').value.trim();
-      if(!username || !pwd) return showToast('Enter username and password', true);
-      const users = getUsers();
-      const user = users.find(u => u.username === username);
-      if(!user) return showToast('User not found', true);
-      const hash = await hashPassword(pwd);
-      if(user.password !== hash) return showToast('Wrong password', true);
-      setSession(user);
-      logActivity('login', `User ${username} logged in`);
-      if(!user.passwordChanged) renderChangePassword(user);
-      else renderMainApp();
-    }
-
-    function renderChangePassword(user) {
-      root.innerHTML = `<div class="card" style="max-width:400px;margin:60px auto;">
-        <h3>🔥 Change Password</h3><p style="color:var(--text-dim);">You must update your default password.</p>
-        <input type="password" id="new1" placeholder="New password"><input type="password" id="new2" placeholder="Confirm" style="margin-top:12px;">
-        <button id="update-btn" class="accent" style="width:100%;margin-top:20px;">Update</button></div>`;
-      document.getElementById('update-btn').addEventListener('click', async () => {
-        const p1 = document.getElementById('new1').value.trim();
-        const p2 = document.getElementById('new2').value.trim();
-        if(p1.length<4) return showToast('Too short', true);
-        if(p1!==p2) return showToast('Passwords mismatch', true);
-        const users = getUsers(); const idx = users.findIndex(u => u.username===user.username);
-        if(idx!==-1) { users[idx].password = await hashPassword(p1); users[idx].passwordChanged = true; saveUsers(users); setSession(users[idx]); }
-        logActivity('password_change'); showToast('Password updated'); renderMainApp();
-      });
-    }
-
-    // ── MAIN APP ──
-    function renderMainApp() {
-      const cur = getCurrentUser(); if(!cur) { renderLogin(); return; }
-      resetTimer();
-      root.innerHTML = `<div class="card" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;">
-        <div class="logo"><span>🔥 Moto Nzuri</span></div>
-        <div class="flex-row"><span style="color:var(--accent);">👤 ${escapeHtml(cur.username)} (${cur.role})</span>
-        <button id="logout-btn" class="danger">↪️ Logout</button></div></div>
-        <div class="nav-tabs" id="nav-tabs"><button class="nav-tab active" data-tab="merchants">🏪 Merchants</button>
-        ${cur.role==='admin'?'<button class="nav-tab" data-tab="users">👥 Users</button><button class="nav-tab" data-tab="logs">📜 Logs</button>':''}</div>
-        <div id="tab-content" class="card"></div>`;
-      document.getElementById('logout-btn').addEventListener('click', () => { logActivity('logout'); clearSession(); renderLogin(); });
-      document.querySelectorAll('.nav-tab').forEach(tab => tab.addEventListener('click', (e) => {
-        document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
-        e.target.classList.add('active');
-        const tabName = e.target.dataset.tab;
-        if(tabName==='merchants') renderMerchants();
-        else if(tabName==='users') renderUsers();
-        else if(tabName==='logs') renderLogs();
-      }));
-      renderMerchants();
-      document.addEventListener('click', resetTimer);
-    }
-
-    // ── MERCHANTS TAB (full delegation) ──
-    function renderMerchants() {
-      const merchants = getMerchants();
-      const content = document.getElementById('tab-content');
-      let html = `<div class="flex-row" style="justify-content:space-between;"><h3>📍 Merchants (${merchants.length})</h3>
+  };
+  // TOTP (simplified)
+  const dec2hex = s => (s<15.5?'0':'')+Math.round(s).toString(16);
+  const hex2dec = s => parseInt(s,16);
+  const base32tohex = b32 => { const chars='ABCDEFGHIJKLMNOPQRSTUVWXYZ234567'; let bits='',hex=''; for(let i=0;i<b32.length;i++){ bits+=chars.indexOf(b32.charAt(i).toUpperCase()).toString(2).padStart(5,'0'); } for(let i=0;i+4<=bits.length;i+=4) hex+=parseInt(bits.substr(i,4),2).toString(16); return hex; };
+  const hmacSha1 = async (key,msg) => { if(crypto?.subtle){ const k=new TextEncoder().encode(key); const m=new TextEncoder().encode(msg); const ck=await crypto.subtle.importKey('raw',k,{name:'HMAC',hash:'SHA-1'},false,['sign']); const sig=await crypto.subtle.sign('HMAC',ck,m); return Array.from(new Uint8Array(sig)).map(b=>b.toString(16).padStart(2,'0')).join(''); } return null; };
+  const generateTOTP = async (secret,time=Math.floor(Date.now()/30000)) => { const key=base32tohex(secret); const msg=dec2hex(time).padStart(16,'0'); const h=await hmacSha1(key,msg); if(!h)return null; const o=hex2dec(h.substring(h.length-1)); return ((hex2dec(h.substr(o*2,8))&0x7fffffff)%1000000).toString().padStart(6,'0'); };
+  // ── Login / Main app ──
+  const renderLogin = () => {
+    wrongAttempts=0; selfieCaptured=false;
+    root.innerHTML = `<div class="card" style="max-width:400px;margin:60px auto;text-align:center;">
+      <div class="logo" style="justify-content:center;font-size:2.2rem;"><span>🔥 Moto Nzuri</span></div>
+      <p style="color:var(--text-dim);">Field Operations</p>
+      <input id="login-username" placeholder="Phone/Username"><input id="login-password" type="password" placeholder="Password" style="margin-top:12px;">
+      <button id="login-btn" class="accent" style="width:100%;margin-top:20px;">🔐 Sign In</button>
+      <p style="font-size:0.75rem;margin-top:15px;">Default: motosana00</p></div>`;
+    document.getElementById('login-btn').onclick = handleLogin;
+  };
+  const handleLogin = async () => {
+    const user=document.getElementById('login-username').value.trim(), pass=document.getElementById('login-password').value.trim();
+    if(!user||!pass) return showToast('Enter credentials',true);
+    const users=getUsers(); const u=users.find(u=>u.username===user);
+    if(!u) { await handleFailedLogin(user); return showToast('User not found',true); }
+    if(u.password!==simpleHash(pass)) { await handleFailedLogin(user); return showToast('Wrong password',true); }
+    wrongAttempts=0; selfieCaptured=false;
+    if(u.totpSecret?.length) { renderTwoFactorPrompt(u); }
+    else { setSession(u); logActivity('login'); if(!u.passwordChanged) renderChangePassword(u); else renderMainApp(); }
+  };
+  const renderTwoFactorPrompt = (user) => {
+    root.innerHTML = `<div class="card" style="max-width:400px;margin:60px auto;text-align:center;">
+      <h3>🔐 Two‑Factor Authentication</h3><p>Enter code from authenticator app.</p>
+      <input id="totp-code" type="text" placeholder="6‑digit code" maxlength="6">
+      <button id="totp-verify" class="accent" style="width:100%;margin-top:15px;">Verify</button>
+      <button id="totp-cancel" style="margin-top:10px;">Cancel</button></div>`;
+    document.getElementById('totp-verify').onclick = async () => {
+      const code=document.getElementById('totp-code').value.trim();
+      const expected = await generateTOTP(user.totpSecret);
+      if(expected && code===expected) { setSession(user); logActivity('login_2fa'); if(!user.passwordChanged) renderChangePassword(user); else renderMainApp(); }
+      else showToast('Invalid 2FA code',true);
+    };
+    document.getElementById('totp-cancel').onclick = renderLogin;
+  };
+  const renderChangePassword = (user) => {
+    root.innerHTML = `<div class="card" style="max-width:400px;margin:60px auto;">
+      <h3>🔥 Change Password</h3><p>Update your default password.</p>
+      <input id="new1" type="password" placeholder="New"><input id="new2" type="password" placeholder="Confirm" style="margin-top:12px;">
+      <button id="update-btn" class="accent" style="width:100%;margin-top:20px;">Update</button></div>`;
+    document.getElementById('update-btn').onclick = () => {
+      const p1=document.getElementById('new1').value.trim(), p2=document.getElementById('new2').value.trim();
+      if(p1.length<4) return showToast('Too short',true);
+      if(p1!==p2) return showToast('Mismatch',true);
+      const users=getUsers(); const i=users.findIndex(u=>u.username===user.username);
+      if(i!==-1){ users[i].password=simpleHash(p1); users[i].passwordChanged=true; saveUsers(users); setSession(users[i]); }
+      logActivity('password_change'); showToast('Updated'); renderMainApp();
+    };
+  };
+  const renderMainApp = () => {
+    const cur=getCurrentUser(); if(!cur) { renderLogin(); return; }
+    resetTimer();
+    root.innerHTML = `<div class="card" style="display:flex;justify-content:space-between;flex-wrap:wrap;">
+      <div class="logo"><span>🔥 Moto Nzuri</span></div>
+      <div class="flex-row"><button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">🌓</button>
+      <span style="color:var(--accent);">👤 ${escHtml(cur.username)} (${cur.role})</span>
+      <button id="logout-btn" class="danger">↪️ Logout</button></div></div>
+      <div class="nav-tabs" id="nav-tabs">
+        <button class="nav-tab active" data-tab="merchants">🏪 Merchants</button>
+        ${cur.role==='admin'?'<button class="nav-tab" data-tab="users">👥 Users</button><button class="nav-tab" data-tab="reports">📊 Reports</button><button class="nav-tab" data-tab="logs">📜 Logs</button><button class="nav-tab" data-tab="selfies">📸 Selfies</button>':''}
+      </div>
+      <div id="tab-content" class="card"></div>`;
+    document.getElementById('logout-btn').onclick = () => { logActivity('logout'); clearSession(); renderLogin(); };
+    document.querySelectorAll('.nav-tab').forEach(tab => tab.onclick = (e) => {
+      document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+      e.target.classList.add('active');
+      const t=e.target.dataset.tab;
+      if(t==='merchants') renderMerchants();
+      else if(t==='users') renderUsers();
+      else if(t==='reports') renderReports();
+      else if(t==='logs') renderLogs();
+      else if(t==='selfies') renderSelfies();
+    });
+    renderMerchants();
+    document.addEventListener('click', resetTimer);
+    document.getElementById('fab-invoice').classList.remove('hidden');
+    document.getElementById('fab-invoice').onclick = openInvoiceModal;
+  };
+  // ── MERCHANTS WITH SEARCH & FILTER ──
+  let currentFiltered = [];
+  const renderMerchants = () => {
+    const all = getMerchants(); currentFiltered = all;
+    const tab = document.getElementById('tab-content');
+    let html = `
+      <div class="flex-row" style="justify-content:space-between;flex-wrap:wrap;">
+        <h3>📍 Merchants (${all.length})</h3>
         <div class="flex-row"><button id="add-merchant-btn" class="accent">➕ Add</button>
-        <button id="export-pdf-btn">🖨️ PDF</button><button id="share-wa-btn">💬 WhatsApp</button></div></div>
-        <div class="table-wrapper"><table><thead><tr><th>Name</th><th>MN</th><th>Map</th><th>Status</th><th>Branding</th><th>IOT</th><th>Contact</th><th>Actions</th></tr></thead><tbody>`;
-      merchants.forEach(m => {
-        html += `<tr>
-          <td>${escapeHtml(m.name)}</td><td>${escapeHtml(m.mn||'')}</td>
-          <td><span class="map-link" data-coords="${escapeAttr(m.coords)}" data-name="${escapeAttr(m.name)}">${m.coords}</span></td>
-          <td>${escapeHtml(m.status||'')}</td>
-          <td><span class="badge ${m.branding.includes('done')?'badge-success':'badge-warning'}">${m.branding||'Pending'}</span></td>
-          <td>${escapeHtml(m.iot||'')}</td><td>${escapeHtml(m.contact||'')} ${escapeHtml(m.phone||'')}</td>
-          <td class="flex-row"><button class="edit-merchant" data-id="${m.id}">✏️</button>
-          <button class="history-merchant" data-id="${m.id}">📋</button>
-          <button class="delete-merchant danger" data-id="${m.id}">🗑️</button></td></tr>`;
+        <button id="export-pdf-btn">🖨️ PDF</button><button id="share-wa-btn">💬 WhatsApp</button></div>
+      </div>
+      <div class="flex-row" style="gap:8px;margin-bottom:10px;">
+        <input id="merchant-search" type="text" placeholder="🔍 Search name, MN, phone..." style="flex:2;">
+        <select id="branding-filter" style="flex:1;">
+          <option value="all">🌐 All</option>
+          <option value="Branding done">✅ Branding done</option>
+          <option value="Pending">⌛ Pending / No</option>
+        </select>
+      </div>
+      <div class="table-wrapper"><table><thead><tr><th>Name</th><th>MN</th><th>Map</th><th>Status</th><th>Branding</th><th>Phone</th><th>Actions</th></tr></thead>
+      <tbody id="merchant-tbody"></tbody></table></div>`;
+    tab.innerHTML = html;
+    const tbody = document.getElementById('merchant-tbody');
+    const searchInput = document.getElementById('merchant-search');
+    const filterSelect = document.getElementById('branding-filter');
+    const updateTable = () => {
+      const q = searchInput.value.trim().toLowerCase();
+      const brand = filterSelect.value;
+      currentFiltered = all.filter(m => {
+        const matchSearch = q==='' || (m.name&&m.name.toLowerCase().includes(q)) || (m.mn&&m.mn.toLowerCase().includes(q)) || (m.phone&&m.phone.toLowerCase().includes(q)) || (m.contact&&m.contact.toLowerCase().includes(q));
+        const matchBrand = brand==='all' || (brand==='Branding done' && m.branding==='Branding done') || (brand==='Pending' && (m.branding!=='Branding done' || !m.branding));
+        return matchSearch && matchBrand;
       });
-      html += `</tbody></table></div>`;
-      content.innerHTML = html;
-
-      // Event delegation (no inline handlers)
-      content.addEventListener('click', (e) => {
-        const target = e.target;
-        if(target.classList.contains('map-link')) {
-          const coords = target.dataset.coords;
-          const name = target.dataset.name;
-          logActivity('map_click', `Opened map for ${name}`);
-          window.open(`https://www.google.com/maps?q=${coords}`, '_blank');
+      tbody.innerHTML = currentFiltered.map(m => `
+        <tr>
+          <td>${escHtml(m.name)}</td><td>${escHtml(m.mn||'')}</td>
+          <td><span class="map-link" data-coords="${escAttr(m.coords)}">${m.coords}</span></td>
+          <td>${escHtml(m.status||'')}</td>
+          <td><span class="badge ${m.branding==='Branding done'?'badge-success':'badge-warning'}">${m.branding||'Pending'}</span></td>
+          <td>${escHtml(m.phone||'')}</td>
+          <td class="flex-row"><button class="edit-merchant" data-id="${m.id}">✏️</button><button class="del-merchant danger" data-id="${m.id}">🗑️</button></td>
+        </tr>`).join('');
+    };
+    updateTable();
+    searchInput.addEventListener('input', updateTable);
+    filterSelect.addEventListener('change', updateTable);
+    tab.addEventListener('click', (e) => {
+      const el = e.target;
+      if(el.classList.contains('map-link')) { window.open(`https://maps.google.com/?q=${el.dataset.coords}`, '_blank'); logActivity('map_click', el.dataset.coords); }
+      else if(el.classList.contains('edit-merchant')) { const m=getMerchants().find(m=>m.id===el.dataset.id); if(m) openMerchantModal(m); }
+      else if(el.classList.contains('del-merchant')) { if(confirm('Delete?')) { saveMerchants(getMerchants().filter(m=>m.id!==el.dataset.id)); logActivity('delete_merchant'); renderMerchants(); } }
+    });
+    document.getElementById('add-merchant-btn').onclick = () => openMerchantModal();
+    document.getElementById('export-pdf-btn').onclick = () => { logActivity('export_pdf'); window.print(); };
+    document.getElementById('share-wa-btn').onclick = () => {
+      const list = currentFiltered.map(m=>`${m.name} | MN:${m.mn||'N/A'} | 📞${m.phone||'N/A'} | ${m.coords}`).join('\n');
+      window.open(`https://wa.me/?text=${encodeURIComponent('🔥 Moto Nzuri\n'+list)}`, '_blank'); logActivity('share_whatsapp');
+    };
+  };
+  const openMerchantModal = (merchant=null) => {
+    const modal=document.createElement('div'); modal.className='modal';
+    modal.innerHTML = `<div class="modal-content"><h3>${merchant?'Edit':'Add'} Merchant</h3>
+      <input id="m-name" placeholder="Shop Name" value="${merchant?escAttr(merchant.name):''}">
+      <input id="m-coords" placeholder="Coordinates (lat,lng)" value="${merchant?merchant.coords:''}">
+      <div class="flex-row"><input id="m-mn" placeholder="MN number" value="${merchant?merchant.mn||'':''}"><input id="m-phone" placeholder="Phone" value="${merchant?merchant.phone||'':''}"></div>
+      <textarea id="m-status" rows="2" placeholder="Status / Notes">${merchant?escAttr(merchant.status):''}</textarea>
+      <select id="m-branding"><option value="Branding done" ${merchant&&merchant.branding==='Branding done'?'selected':''}>Branding done</option><option value="Pending" ${merchant&&merchant.branding==='Pending'?'selected':''}>Pending</option></select>
+      <div class="flex-row" style="justify-content:flex-end;"><button id="cancel-modal">Cancel</button><button id="save-modal" class="accent">Save</button></div></div>`;
+    document.body.appendChild(modal);
+    document.getElementById('cancel-modal').onclick = () => modal.remove();
+    document.getElementById('save-modal').onclick = () => {
+      const name=document.getElementById('m-name').value.trim(), coords=document.getElementById('m-coords').value.trim();
+      if(!name||!coords) return showToast('Name & coordinates required',true);
+      const data = { id: merchant? merchant.id : Date.now().toString(), name, coords,
+        mn: document.getElementById('m-mn').value.trim(), phone: document.getElementById('m-phone').value.trim(),
+        status: document.getElementById('m-status').value.trim(), branding: document.getElementById('m-branding').value };
+      let merchants=getMerchants();
+      if(merchant) { const idx=merchants.findIndex(m=>m.id===merchant.id); if(idx!==-1) merchants[idx]=data; }
+      else merchants.push(data);
+      saveMerchants(merchants); logActivity(merchant?'edit_merchant':'add_merchant', name); modal.remove(); renderMerchants(); showToast('Saved');
+    };
+  };
+  // ── USERS ──
+  const renderUsers = () => {
+    if(getCurrentUser()?.role!=='admin') return;
+    const users=getUsers();
+    const tab=document.getElementById('tab-content');
+    tab.innerHTML = `<div class="flex-row"><h3>👥 Users</h3><button id="add-user-btn" class="accent">➕ Add</button></div>
+      <div class="table-wrapper"><table><thead><tr><th>Username</th><th>Role</th><th>2FA</th><th>Pwd Changed</th><th></th></tr></thead><tbody>
+      ${users.map(u=>`<tr><td>${escHtml(u.username)}</td><td>${u.role}</td><td>${u.totpSecret?'✅':'❌'}</td><td>${u.passwordChanged?'✅':'⚠️'}</td>
+      <td><button class="edit-user" data-username="${u.username}">✏️</button>${u.username!=='moto_admin'?`<button class="del-user danger" data-username="${u.username}">🗑️</button>`:''}</td></tr>`).join('')}
+      </tbody></table></div>`;
+    document.getElementById('add-user-btn').onclick = () => openUserModal();
+    document.querySelectorAll('.edit-user').forEach(b => b.onclick = () => { const u=getUsers().find(u=>u.username===b.dataset.username); if(u) openUserModal(u); });
+    document.querySelectorAll('.del-user').forEach(b => b.onclick = () => { if(confirm('Delete?')) { saveUsers(getUsers().filter(u=>u.username!==b.dataset.username)); logActivity('delete_user'); renderUsers(); } });
+  };
+  const openUserModal = (user=null) => {
+    const modal=document.createElement('div'); modal.className='modal';
+    modal.innerHTML = `<div class="modal-content"><h3>${user?'Edit':'Add'} User</h3>
+      <input id="u-name" placeholder="Username" value="${user?escAttr(user.username):''}" ${user?'readonly':''}>
+      <select id="u-role"><option value="field" ${user&&user.role==='field'?'selected':''}>Field</option><option value="admin" ${user&&user.role==='admin'?'selected':''}>Admin</option></select>
+      <input id="u-pass" type="password" placeholder="New password (leave blank)">
+      <label style="display:flex;align-items:center;gap:8px;"><input type="checkbox" id="u-2fa" ${user&&user.totpSecret?'checked':''}> Enable 2FA</label>
+      <div class="flex-row" style="justify-content:flex-end;"><button id="cancel-user">Cancel</button><button id="save-user" class="accent">Save</button></div></div>`;
+    document.body.appendChild(modal);
+    document.getElementById('cancel-user').onclick = () => modal.remove();
+    document.getElementById('save-user').onclick = async () => {
+      const username=document.getElementById('u-name').value.trim(), role=document.getElementById('u-role').value;
+      const pass=document.getElementById('u-pass').value.trim(), enable2FA=document.getElementById('u-2fa').checked;
+      if(!username) return showToast('Username required',true);
+      let users=getUsers();
+      if(user) {
+        const idx=users.findIndex(u=>u.username===user.username);
+        if(idx!==-1) {
+          if(pass) users[idx].password = simpleHash(pass);
+          users[idx].role = role;
+          if(enable2FA && !users[idx].totpSecret) {
+            const chars='ABCDEFGHIJKLMNOPQRSTUVWXYZ234567'; let s=''; for(let i=0;i<16;i++) s+=chars.charAt(Math.floor(Math.random()*chars.length));
+            users[idx].totpSecret = s; showToast(`2FA secret: ${s}. Save in authenticator.`, false);
+          } else if(!enable2FA) users[idx].totpSecret = '';
         }
-        else if(target.classList.contains('edit-merchant')) {
-          const merchant = getMerchants().find(m => m.id === target.dataset.id);
-          if(merchant) openMerchantModal(merchant);
-        }
-        else if(target.classList.contains('history-merchant')) {
-          renderMerchantHistory(target.dataset.id);
-        }
-        else if(target.classList.contains('delete-merchant')) {
-          if(confirm('Delete this merchant?')) {
-            const updated = getMerchants().filter(m => m.id !== target.dataset.id);
-            saveMerchants(updated); logActivity('delete_merchant', target.dataset.id); renderMerchants(); showToast('Deleted');
-          }
-        }
-      });
-
-      document.getElementById('add-merchant-btn').addEventListener('click', () => openMerchantModal());
-      document.getElementById('export-pdf-btn').addEventListener('click', () => { logActivity('export_pdf'); window.print(); });
-      document.getElementById('share-wa-btn').addEventListener('click', shareWhatsApp);
-    }
-
-    function openMerchantModal(merchant=null) {
-      const modal = document.createElement('div'); modal.className = 'modal';
-      modal.innerHTML = `<div class="modal-content"><h3>${merchant?'Edit':'Add'} Merchant</h3>
-        <input id="m-name" placeholder="Shop Name" value="${merchant?escapeAttr(merchant.name):''}">
-        <div class="flex-row"><input id="m-loc" placeholder="Location" value="${merchant?escapeAttr(merchant.location):''}">
-        <input id="m-coords" placeholder="lat,lng" value="${merchant?merchant.coords:''}"></div>
-        <input id="m-mn" placeholder="MN" value="${merchant?merchant.mn||'':''}">
-        <input id="m-iot" placeholder="IOT" value="${merchant?merchant.iot||'':''}">
-        <textarea id="m-status" rows="3" placeholder="Status">${merchant?escapeAttr(merchant.status):''}</textarea>
-        <select id="m-branding"><option value="Branding done" ${merchant&&merchant.branding==='Branding done'?'selected':''}>Branding done</option>
-        <option value="Pending" ${merchant&&merchant.branding==='Pending'?'selected':''}>Pending</option></select>
-        <div class="flex-row"><input id="m-contact" placeholder="Contact" value="${merchant?escapeAttr(merchant.contact||''):''}">
-        <input id="m-phone" placeholder="Phone" value="${merchant?escapeAttr(merchant.phone||''):''}"></div>
-        <div class="flex-row" style="justify-content:flex-end;"><button id="cancel-modal">Cancel</button>
-        <button id="save-modal" class="accent">Save</button></div></div>`;
-      document.body.appendChild(modal);
-      document.getElementById('cancel-modal').addEventListener('click', () => modal.remove());
-      document.getElementById('save-modal').addEventListener('click', () => {
-        const name = document.getElementById('m-name').value.trim();
-        const coords = document.getElementById('m-coords').value.trim();
-        if(!name||!coords) return showToast('Name & coords required',true);
-        const data = {
-          id: merchant ? merchant.id : Date.now().toString(),
-          name, location: document.getElementById('m-loc').value.trim(), coords,
-          mn: document.getElementById('m-mn').value.trim(), iot: document.getElementById('m-iot').value.trim(),
-          status: document.getElementById('m-status').value.trim(), branding: document.getElementById('m-branding').value,
-          contact: document.getElementById('m-contact').value.trim(), phone: document.getElementById('m-phone').value.trim(), kp:''
-        };
-        let merchants = getMerchants();
-        if(merchant) { const idx = merchants.findIndex(m=>m.id===merchant.id); if(idx!==-1) merchants[idx]=data; }
-        else merchants.push(data);
-        saveMerchants(merchants); logActivity(merchant?'edit_merchant':'add_merchant', name);
-        modal.remove(); renderMerchants(); showToast('Saved');
-      });
-    }
-
-    function renderMerchantHistory(id) {
-      const merchant = getMerchants().find(m=>m.id===id); if(!merchant) return;
-      const logs = getLogs().filter(l=>l.details.includes(merchant.name));
-      const modal = document.createElement('div'); modal.className='modal';
-      modal.innerHTML = `<div class="modal-content"><h3>History: ${escapeHtml(merchant.name)}</h3>
-        <div style="max-height:300px;overflow:auto;">${logs.map(l=>`<div class="history-entry"><strong>${new Date(l.timestamp).toLocaleString()}</strong> - ${escapeHtml(l.user)}<br>${escapeHtml(l.action)}: ${escapeHtml(l.details)}</div>`).join('')||'No activity'}</div>
-        <button id="close-hist" style="margin-top:15px;">Close</button></div>`;
-      document.body.appendChild(modal);
-      document.getElementById('close-hist').addEventListener('click', () => modal.remove());
-    }
-
-    function shareWhatsApp() {
-      const list = getMerchants().map((m,i)=>`${i+1}. ${m.name} | MN:${m.mn||'N/A'} | ${m.coords}\n   ${m.status||''} | ${m.branding||'Pending'}`).join('\n\n');
-      window.open(`https://wa.me/?text=${encodeURIComponent('🔥 Moto Nzuri Report\n\n'+list)}`, '_blank');
-      logActivity('share_whatsapp');
-    }
-
-    // ── USERS ──
-    function renderUsers() {
-      if(getCurrentUser()?.role!=='admin') return;
-      const users = getUsers();
-      document.getElementById('tab-content').innerHTML = `<div class="flex-row"><h3>👥 Users</h3><button id="add-user-btn" class="accent">➕ Add</button></div>
-        <div class="table-wrapper"><table><thead><tr><th>Username</th><th>Role</th><th>Pwd Changed</th><th></th></tr></thead><tbody>
-        ${users.map(u=>`<tr><td>${escapeHtml(u.username)}</td><td>${u.role}</td><td>${u.passwordChanged?'✅':'⚠️'}</td>
-        <td class="flex-row"><button class="edit-user" data-username="${u.username}">✏️</button>
-        ${u.username!=='moto_admin'?`<button class="delete-user danger" data-username="${u.username}">🗑️</button>`:''}</td></tr>`).join('')}
-        </tbody></table></div>`;
-      document.getElementById('add-user-btn').addEventListener('click', () => openUserModal());
-      document.querySelectorAll('.edit-user').forEach(b => b.addEventListener('click', () => {
-        const user = getUsers().find(u=>u.username===b.dataset.username); if(user) openUserModal(user);
-      }));
-      document.querySelectorAll('.delete-user').forEach(b => b.addEventListener('click', () => {
-        if(confirm('Delete user?')) { const updated = getUsers().filter(u=>u.username!==b.dataset.username); saveUsers(updated); logActivity('delete_user',b.dataset.username); renderUsers(); }
-      }));
-    }
-
-    function openUserModal(user=null) {
-      const modal = document.createElement('div'); modal.className='modal';
-      modal.innerHTML = `<div class="modal-content"><h3>${user?'Edit':'Add'} User</h3>
-        <input id="u-name" placeholder="Username" value="${user?escapeAttr(user.username):''}" ${user?'readonly':''}>
-        <select id="u-role"><option value="field" ${user&&user.role==='field'?'selected':''}>Field</option><option value="admin" ${user&&user.role==='admin'?'selected':''}>Admin</option></select>
-        <input type="password" id="u-pass" placeholder="New password (leave blank)">
-        <div class="flex-row" style="justify-content:flex-end;"><button id="cancel-user">Cancel</button><button id="save-user" class="accent">Save</button></div></div>`;
-      document.body.appendChild(modal);
-      document.getElementById('cancel-user').addEventListener('click', () => modal.remove());
-      document.getElementById('save-user').addEventListener('click', async () => {
-        const username = document.getElementById('u-name').value.trim();
-        const role = document.getElementById('u-role').value;
-        const pass = document.getElementById('u-pass').value.trim();
-        if(!username) return showToast('Username required',true);
-        let users = getUsers();
-        if(user) {
-          const idx = users.findIndex(u=>u.username===user.username);
-          if(idx!==-1) { if(pass) users[idx].password = await hashPassword(pass); users[idx].role = role; }
-        } else {
-          if(users.some(u=>u.username===username)) return showToast('User exists',true);
-          users.push({ username, password: await hashPassword(pass||DEFAULT_PASS), role, passwordChanged:false });
-        }
-        saveUsers(users); logActivity(user?'edit_user':'add_user', username); modal.remove(); renderUsers(); showToast('Saved');
-      });
-    }
-
-    function renderLogs() {
-      const logs = getLogs().slice().reverse();
-      document.getElementById('tab-content').innerHTML = `<h3>📜 Activity Logs</h3><div class="table-wrapper"><table>
-        <thead><tr><th>Time</th><th>User</th><th>Action</th><th>Details</th></tr></thead><tbody>
-        ${logs.map(l=>`<tr><td>${new Date(l.timestamp).toLocaleString()}</td><td>${escapeHtml(l.user)}</td><td>${escapeHtml(l.action)}</td><td>${escapeHtml(l.details)}</td></tr>`).join('')}
-        </tbody></table></div>`;
-    }
-
-    // ── START ──
-    (async ()=>{
-      try {
-        await initData();
-        if(getCurrentUser()) { resetTimer(); renderMainApp(); } else renderLogin();
-      } catch(e) {
-        document.getElementById('error-banner').style.display = 'block';
-        document.getElementById('error-banner').textContent = 'Fatal error: ' + e.message;
-        console.error(e);
+      } else {
+        if(users.some(u=>u.username===username)) return showToast('Exists',true);
+        users.push({ username, password: simpleHash(pass||DEFAULT_PASS), role, passwordChanged:false, totpSecret:'' });
       }
-    })();
-  })();
+      saveUsers(users); logActivity(user?'edit_user':'add_user'); modal.remove(); renderUsers(); showToast('Saved');
+    };
+  };
+  // ── REPORTS ──
+  const renderReports = () => {
+    if(getCurrentUser()?.role!=='admin') return;
+    const users=getUsers();
+    document.getElementById('tab-content').innerHTML = `<h3>📊 Activity Reports</h3>
+      <div class="flex-row"><select id="r-user"><option value="all">All</option>${users.map(u=>`<option>${escHtml(u.username)}</option>`).join('')}</select>
+      <input id="r-start" type="date"><input id="r-end" type="date">
+      <button id="gen-report" class="accent">🔍 Generate</button>
+      <button id="csv-weekly" class="accent" style="background:#059669;">📤 Weekly CSV</button></div>
+      <div id="report-results" class="mt-2"></div>`;
+    document.getElementById('r-start').valueAsDate = new Date(); document.getElementById('r-end').valueAsDate = new Date();
+    document.getElementById('gen-report').onclick = () => {
+      const user=document.getElementById('r-user').value, start=document.getElementById('r-start').value, end=document.getElementById('r-end').value;
+      if(!start||!end) return;
+      const logs=getLogs().filter(l=> { const d=new Date(l.timestamp).toISOString().split('T')[0]; return d>=start&&d<=end&&(user==='all'||l.user===user); });
+      const res=document.getElementById('report-results');
+      if(!logs.length) { res.innerHTML='<p>No activity.</p>'; return; }
+      res.innerHTML = `<table><tr><th>Time</th><th>User</th><th>Action</th><th>Details</th></tr>${logs.map(l=>`<tr><td>${new Date(l.timestamp).toLocaleString()}</td><td>${escHtml(l.user)}</td><td>${escHtml(l.action)}</td><td>${escHtml(l.details)}</td></tr>`).join('')}</table>`;
+    };
+    document.getElementById('csv-weekly').onclick = () => {
+      const weekAgo=new Date(Date.now()-7*86400000).toISOString().split('T')[0];
+      const logs=getLogs().filter(l=>l.timestamp>=weekAgo);
+      let csv='Timestamp,User,Action,Details\n';
+      logs.forEach(l=>{ csv+=`"${l.timestamp}","${l.user}","${l.action}","${(l.details||'').replace(/"/g,'""')}"\n`; });
+      const blob=new Blob([csv],{type:'text/csv'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`moto_weekly_${weekAgo}.csv`; a.click();
+      logActivity('export_weekly_csv'); showToast('CSV exported');
+    };
+  };
+  // ── LOGS ──
+  const renderLogs = () => {
+    const logs=getLogs().slice().reverse();
+    document.getElementById('tab-content').innerHTML = `<h3>📜 Logs</h3><table><tr><th>Time</th><th>User</th><th>Action</th><th>Details</th></tr>${logs.map(l=>`<tr><td>${new Date(l.timestamp).toLocaleString()}</td><td>${escHtml(l.user)}</td><td>${escHtml(l.action)}</td><td>${escHtml(l.details)}</td></tr>`).join('')}</table>`;
+  };
+  // ── SELFIES ──
+  const renderSelfies = () => {
+    if(getCurrentUser()?.role!=='admin') return;
+    const selfies=getSelfies();
+    let html=`<h3>📸 Captured Selfies (failed logins)</h3>`;
+    if(!selfies.length) html+='<p>No selfies captured.</p>';
+    else selfies.forEach(s=>{ html+=`<div class="card"><p>Time: ${new Date(s.timestamp).toLocaleString()}</p><p>User: ${escHtml(s.username)}</p><p>IP: ${s.ip}</p><p>Device: ${JSON.stringify(s.device)}</p>${s.selfie&&s.selfie.startsWith('data:')?`<img src="${s.selfie}" style="max-width:200px;">`:'<p>No image</p>'}</div>`; });
+    document.getElementById('tab-content').innerHTML = html;
+  };
+  // ── INVOICE ──
+  const openInvoiceModal = () => {
+    const merchants=getMerchants();
+    const modal=document.createElement('div'); modal.className='modal';
+    modal.innerHTML = `<div class="modal-content" style="max-width:800px;"><h3>🧾 New Invoice</h3>
+      <select id="inv-merchant"><option value="">Select Merchant</option>${merchants.map(m=>`<option value="${m.id}">${escHtml(m.name)}</option>`).join('')}</select>
+      <div class="flex-row"><input id="inv-customer" placeholder="Customer"><input id="inv-date" type="date" value="${new Date().toISOString().split('T')[0]}"></div>
+      <div id="inv-items"><div class="flex-row"><input placeholder="Item" class="inv-desc"><input type="number" placeholder="Qty" class="inv-qty" style="width:80px;"><input type="number" placeholder="Price" class="inv-price" style="width:100px;"></div></div>
+      <button id="add-item">➕ Add line</button>
+      <div class="flex-row" style="justify-content:flex-end;margin-top:15px;"><button id="cancel-inv">Cancel</button><button id="preview-inv" class="accent">👁️ Preview</button></div></div>`;
+    document.body.appendChild(modal);
+    document.getElementById('cancel-inv').onclick = () => modal.remove();
+    document.getElementById('add-item').onclick = () => {
+      const row=document.createElement('div'); row.className='flex-row';
+      row.innerHTML = `<input placeholder="Item" class="inv-desc"><input type="number" placeholder="Qty" class="inv-qty" style="width:80px;"><input type="number" placeholder="Price" class="inv-price" style="width:100px;"><button class="remove-row danger">✕</button>`;
+      document.getElementById('inv-items').appendChild(row); row.querySelector('.remove-row').onclick = () => row.remove();
+    };
+    document.getElementById('preview-inv').onclick = () => {
+      const mId=document.getElementById('inv-merchant').value;
+      const merchant=getMerchants().find(m=>m.id===mId);
+      const cust=document.getElementById('inv-customer').value.trim(), date=document.getElementById('inv-date').value;
+      if(!merchant||!cust) return showToast('Select merchant & customer',true);
+      const items=[]; let total=0;
+      document.querySelectorAll('#inv-items .flex-row').forEach(row => {
+        const d=row.querySelector('.inv-desc').value.trim(), q=parseFloat(row.querySelector('.inv-qty').value), p=parseFloat(row.querySelector('.inv-price').value);
+        if(d && !isNaN(q) && !isNaN(p)) { items.push({desc:d,qty:q,price:p}); total+=q*p; }
+      });
+      if(!items.length) return showToast('Add items',true);
+      modal.remove(); showInvoicePreview(merchant,cust,date,items,total);
+    };
+  };
+  const showInvoicePreview = (merchant,cust,date,items,total) => {
+    const modal=document.createElement('div'); modal.className='modal';
+    modal.innerHTML = `<div class="modal-content" style="background:white;color:black;"><div style="padding:20px;" id="printable-invoice">
+      <h2 style="color:#ff8c00;">🔥 Moto Nzuri</h2><p>Field Operations</p><hr>
+      <p><b>Customer:</b> ${escHtml(cust)}</p><p><b>Location:</b> ${escHtml(merchant.name)}</p><p><b>Date:</b> ${date}</p>
+      <table><tr><th>Item</th><th>Qty</th><th>Price</th><th>Total</th></tr>${items.map(i=>`<tr><td>${escHtml(i.desc)}</td><td>${i.qty}</td><td>${i.price.toFixed(2)}</td><td>${(i.qty*i.price).toFixed(2)}</td></tr>`).join('')}</table>
+      <p style="text-align:right;font-weight:bold;">Total: KES ${total.toFixed(2)}</p></div>
+      <div class="flex-row" style="justify-content:flex-end;"><button id="close-inv">Close</button><button id="print-inv" class="accent">🖨️ Print</button></div></div>`;
+    document.body.appendChild(modal);
+    document.getElementById('close-inv').onclick = () => modal.remove();
+    document.getElementById('print-inv').onclick = () => {
+      const w=window.open('','','width=800,height=600');
+      w.document.write(`<html><head><title>Invoice</title><style>body{font-family:monospace;padding:30px;} table{border-collapse:collapse;width:100%;} th,td{border:1px solid #000;padding:8px;}</style></head><body>${document.getElementById('printable-invoice').innerHTML}</body></html>`);
+      w.document.close(); w.print();
+    };
+  };
+  // ── START ──
+  window.addEventListener('load', ()=> {
+    try {
+      initData();
+      if(getCurrentUser()) { resetTimer(); renderMainApp(); }
+      else renderLogin();
+    } catch(e) {
+      document.getElementById('error-banner').style.display='block';
+      document.getElementById('error-banner').textContent = 'Error: '+e.message;
+    }
+  });
+})();
 </script>
 </body>
 </html>
