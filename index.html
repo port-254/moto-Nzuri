@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; frame-src 'none';">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; frame-src 'none';">
   <title>🔥 Moto Nzuri · Field Operations</title>
   <style>
     * { margin:0; padding:0; box-sizing:border-box; }
@@ -63,7 +63,11 @@
   </style>
 </head>
 <body>
-<div id="app-container"><div id="dynamic-root"></div></div>
+<div id="app-container">
+  <!-- Error display (hidden by default) -->
+  <div id="error-banner" style="background:#e74c3c;color:white;padding:15px;border-radius:10px;margin-bottom:15px;display:none;"></div>
+  <div id="dynamic-root"></div>
+</div>
 
 <script>
   (function() {
@@ -73,11 +77,23 @@
     const TIMEOUT = 30 * 60 * 1000;
     let sessionTimer;
 
-    // ── SECURITY: SHA-256 HASHING ──
+    // ── SECURITY: HASHING (with fallback for file://) ──
     async function hashPassword(pwd) {
-      const enc = new TextEncoder();
-      const buf = await crypto.subtle.digest('SHA-256', enc.encode(pwd));
-      return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+      try {
+        const enc = new TextEncoder();
+        const buf = await crypto.subtle.digest('SHA-256', enc.encode(pwd));
+        return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+      } catch(e) {
+        // Fallback for insecure contexts (e.g. file://): simple XOR hash (not secure, but avoids blank screen)
+        console.warn('Crypto unavailable – using fallback hash');
+        let hash = 0;
+        for (let i = 0; i < pwd.length; i++) {
+          const ch = pwd.charCodeAt(i);
+          hash = ((hash << 5) - hash) + ch;
+          hash |= 0;
+        }
+        return 'fallback_' + Math.abs(hash).toString(16);
+      }
     }
 
     // ── SESSION ──
@@ -105,7 +121,7 @@
       saveLogs(logs);
     }
 
-    // ── DEFAULT DATA (all 38 merchants) ──
+    // ── DEFAULT DATA (all 38 merchants, escaped properly) ──
     const defaultMerchants = [
       {id:"1",name:"Delight Beauty-Thika",location:"Thika",coords:"-1.05605,37.11084",status:"Waiting for confirmation",branding:"No",mn:"",iot:"",contact:"",phone:"",kp:""},
       {id:"2",name:"BM Traders -Thika",location:"Thika",coords:"-1.05948,37.11652",status:"Mn-0082",branding:"Branding done",mn:"0082",iot:"",contact:"",phone:"",kp:""},
@@ -136,12 +152,12 @@
       {id:"27",name:"Duka Moja-Juja",location:"Juja",coords:"-1.15785,37.03868",status:"MN-0008",branding:"",mn:"0008",iot:"",contact:"",phone:"",kp:""},
       {id:"28",name:"Mama Waithera Shop _Juja",location:"Juja",coords:"1.14422,37.0017",status:"MN-0081",branding:"",mn:"0081",iot:"",contact:"",phone:"",kp:""},
       {id:"29",name:"Shiko General-Juja",location:"Juja",coords:"-1.1445,37.00783",status:"MN-0083",branding:"",mn:"0083",iot:"",contact:"",phone:"",kp:""},
-      {id:"30",name:"Bull's shop Huruma",location:"Huruma",coords:"-1.261325,36.8781857",status:"Valves open, branded, tablet installed, awaiting refill",branding:"Branding done",mn:"0065",iot:"2995443",contact:"",phone:"",kp:""},
-      {id:"31",name:"Master's Kerosene pump Huruma",location:"Huruma",coords:"-1.2588451,36.8700281",status:"Valves open, branded, refill box to be installed",branding:"Branding done",mn:"0068",iot:"2995456",contact:"",phone:"",kp:""},
+      {id:"30",name:"Bull\u2019s shop Huruma",location:"Huruma",coords:"-1.261325,36.8781857",status:"Valves open, branded, tablet installed, awaiting refill",branding:"Branding done",mn:"0065",iot:"2995443",contact:"",phone:"",kp:""},
+      {id:"31",name:"Master\u2019s Kerosene pump Huruma",location:"Huruma",coords:"-1.2588451,36.8700281",status:"Valves open, branded, refill box to be installed",branding:"Branding done",mn:"0068",iot:"2995456",contact:"",phone:"",kp:""},
       {id:"32",name:"Ropem Telkom Huruma",location:"Huruma",coords:"-1.25943,36.8669556",status:"Valves open, branded, awaiting relocation",branding:"Branding done",mn:"0066",iot:"2995439",contact:"",phone:"",kp:""},
       {id:"33",name:"Ropem Telkom 2 Huruma",location:"Huruma",coords:"-1.25943,36.8669556",status:"Valves open, branded, awaiting relocation",branding:"Branding done",mn:"0067",iot:"2995468",contact:"",phone:"",kp:""},
       {id:"34",name:"Kero and Blue Gas",location:"Nairobi",coords:"-1.26115,36.86294",status:"Contact: Anthony Mwangi Njuguna, 0726654592, KP 2193",branding:"",mn:"",iot:"",contact:"Anthony Mwangi Njuguna",phone:"0726654592",kp:"2193"},
-      {id:"35",name:"Davie’s Electrical and Phone Accessories",location:"Nairobi",coords:"-1.2552832,36.8624338",status:"Contact: Moses Aluoch Ngira, 0799058294",branding:"",mn:"",iot:"",contact:"Moses Aluoch Ngira",phone:"0799058294",kp:"KP-1379/2838"},
+      {id:"35",name:"Davie\u2019s Electrical and Phone Accessories",location:"Nairobi",coords:"-1.2552832,36.8624338",status:"Contact: Moses Aluoch Ngira, 0799058294",branding:"",mn:"",iot:"",contact:"Moses Aluoch Ngira",phone:"0799058294",kp:"KP-1379/2838"},
       {id:"36",name:"Henice Kerosene and Gas",location:"Nairobi",coords:"-1.289376,36.84455605",status:"Contact: Henry Gakuyi, 0724407896, KP 0262",branding:"",mn:"",iot:"",contact:"Henry Gakuyi",phone:"0724407896",kp:"0262"},
       {id:"37",name:"Kimuka gas",location:"Ngong",coords:"-1.359592,36.598003",status:"KP-1459, Elphinah Nyaboke, +254759108560",branding:"",mn:"",iot:"",contact:"Elphinah Nyaboke",phone:"+254759108560",kp:"1459"},
       {id:"38",name:"Maristella Enterprise",location:"Ngong",coords:"-1.33568,36.67214",status:"KP-3587, Stella Wachera Kingori, +254722305666",branding:"",mn:"",iot:"",contact:"Stella Wachera Kingori",phone:"+254722305666",kp:"3587"}
@@ -160,16 +176,21 @@
 
     // ── INIT ──
     async function initData() {
-      if(!localStorage.getItem(KEYS.USERS)) {
-        const adminHash = await hashPassword('crud');
-        const fieldHash = await hashPassword(DEFAULT_PASS);
-        saveUsers([
-          { username:'moto_admin', password:adminHash, role:'admin', passwordChanged:true },
-          { username:'fieldagent1', password:fieldHash, role:'field', passwordChanged:false }
-        ]);
+      try {
+        if(!localStorage.getItem(KEYS.USERS)) {
+          const adminHash = await hashPassword('crud');
+          const fieldHash = await hashPassword(DEFAULT_PASS);
+          saveUsers([
+            { username:'moto_admin', password:adminHash, role:'admin', passwordChanged:true },
+            { username:'fieldagent1', password:fieldHash, role:'field', passwordChanged:false }
+          ]);
+        }
+        if(!localStorage.getItem(KEYS.MERCHANTS)) saveMerchants(defaultMerchants);
+        if(!localStorage.getItem(KEYS.LOGS)) saveLogs([]);
+      } catch(e) {
+        document.getElementById('error-banner').style.display = 'block';
+        document.getElementById('error-banner').textContent = 'Error initializing data: ' + e.message;
       }
-      if(!localStorage.getItem(KEYS.MERCHANTS)) saveMerchants(defaultMerchants);
-      if(!localStorage.getItem(KEYS.LOGS)) saveLogs([]);
     }
 
     // ── RENDER LOGIN ──
@@ -182,7 +203,7 @@
         <button id="login-btn" class="accent" style="width:100%;margin-top:20px;">🔐 Sign In</button>
         <p style="font-size:0.75rem;color:var(--text-dim);margin-top:15px;">Default password: motosana00</p>
       </div>`;
-      document.getElementById('login-btn').onclick = handleLogin;
+      document.getElementById('login-btn').addEventListener('click', handleLogin);
     }
 
     async function handleLogin() {
@@ -205,7 +226,7 @@
         <h3>🔥 Change Password</h3><p style="color:var(--text-dim);">You must update your default password.</p>
         <input type="password" id="new1" placeholder="New password"><input type="password" id="new2" placeholder="Confirm" style="margin-top:12px;">
         <button id="update-btn" class="accent" style="width:100%;margin-top:20px;">Update</button></div>`;
-      document.getElementById('update-btn').onclick = async () => {
+      document.getElementById('update-btn').addEventListener('click', async () => {
         const p1 = document.getElementById('new1').value.trim();
         const p2 = document.getElementById('new2').value.trim();
         if(p1.length<4) return showToast('Too short', true);
@@ -213,7 +234,7 @@
         const users = getUsers(); const idx = users.findIndex(u => u.username===user.username);
         if(idx!==-1) { users[idx].password = await hashPassword(p1); users[idx].passwordChanged = true; saveUsers(users); setSession(users[idx]); }
         logActivity('password_change'); showToast('Password updated'); renderMainApp();
-      };
+      });
     }
 
     // ── MAIN APP ──
@@ -227,20 +248,20 @@
         <div class="nav-tabs" id="nav-tabs"><button class="nav-tab active" data-tab="merchants">🏪 Merchants</button>
         ${cur.role==='admin'?'<button class="nav-tab" data-tab="users">👥 Users</button><button class="nav-tab" data-tab="logs">📜 Logs</button>':''}</div>
         <div id="tab-content" class="card"></div>`;
-      document.getElementById('logout-btn').onclick = () => { logActivity('logout'); clearSession(); renderLogin(); };
-      document.querySelectorAll('.nav-tab').forEach(tab => tab.onclick = (e) => {
+      document.getElementById('logout-btn').addEventListener('click', () => { logActivity('logout'); clearSession(); renderLogin(); });
+      document.querySelectorAll('.nav-tab').forEach(tab => tab.addEventListener('click', (e) => {
         document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
         e.target.classList.add('active');
         const tabName = e.target.dataset.tab;
         if(tabName==='merchants') renderMerchants();
         else if(tabName==='users') renderUsers();
         else if(tabName==='logs') renderLogs();
-      });
+      }));
       renderMerchants();
       document.addEventListener('click', resetTimer);
     }
 
-    // ── MERCHANTS TAB (with delegation) ──
+    // ── MERCHANTS TAB (full delegation) ──
     function renderMerchants() {
       const merchants = getMerchants();
       const content = document.getElementById('tab-content');
@@ -262,7 +283,7 @@
       html += `</tbody></table></div>`;
       content.innerHTML = html;
 
-      // Event delegation
+      // Event delegation (no inline handlers)
       content.addEventListener('click', (e) => {
         const target = e.target;
         if(target.classList.contains('map-link')) {
@@ -286,9 +307,9 @@
         }
       });
 
-      document.getElementById('add-merchant-btn').onclick = () => openMerchantModal();
-      document.getElementById('export-pdf-btn').onclick = () => { logActivity('export_pdf'); window.print(); };
-      document.getElementById('share-wa-btn').onclick = shareWhatsApp;
+      document.getElementById('add-merchant-btn').addEventListener('click', () => openMerchantModal());
+      document.getElementById('export-pdf-btn').addEventListener('click', () => { logActivity('export_pdf'); window.print(); });
+      document.getElementById('share-wa-btn').addEventListener('click', shareWhatsApp);
     }
 
     function openMerchantModal(merchant=null) {
@@ -307,8 +328,8 @@
         <div class="flex-row" style="justify-content:flex-end;"><button id="cancel-modal">Cancel</button>
         <button id="save-modal" class="accent">Save</button></div></div>`;
       document.body.appendChild(modal);
-      document.getElementById('cancel-modal').onclick = () => modal.remove();
-      document.getElementById('save-modal').onclick = () => {
+      document.getElementById('cancel-modal').addEventListener('click', () => modal.remove());
+      document.getElementById('save-modal').addEventListener('click', () => {
         const name = document.getElementById('m-name').value.trim();
         const coords = document.getElementById('m-coords').value.trim();
         if(!name||!coords) return showToast('Name & coords required',true);
@@ -324,7 +345,7 @@
         else merchants.push(data);
         saveMerchants(merchants); logActivity(merchant?'edit_merchant':'add_merchant', name);
         modal.remove(); renderMerchants(); showToast('Saved');
-      };
+      });
     }
 
     function renderMerchantHistory(id) {
@@ -335,7 +356,7 @@
         <div style="max-height:300px;overflow:auto;">${logs.map(l=>`<div class="history-entry"><strong>${new Date(l.timestamp).toLocaleString()}</strong> - ${escapeHtml(l.user)}<br>${escapeHtml(l.action)}: ${escapeHtml(l.details)}</div>`).join('')||'No activity'}</div>
         <button id="close-hist" style="margin-top:15px;">Close</button></div>`;
       document.body.appendChild(modal);
-      document.getElementById('close-hist').onclick = () => modal.remove();
+      document.getElementById('close-hist').addEventListener('click', () => modal.remove());
     }
 
     function shareWhatsApp() {
@@ -354,13 +375,13 @@
         <td class="flex-row"><button class="edit-user" data-username="${u.username}">✏️</button>
         ${u.username!=='moto_admin'?`<button class="delete-user danger" data-username="${u.username}">🗑️</button>`:''}</td></tr>`).join('')}
         </tbody></table></div>`;
-      document.getElementById('add-user-btn').onclick = () => openUserModal();
-      document.querySelectorAll('.edit-user').forEach(b => b.onclick = () => {
+      document.getElementById('add-user-btn').addEventListener('click', () => openUserModal());
+      document.querySelectorAll('.edit-user').forEach(b => b.addEventListener('click', () => {
         const user = getUsers().find(u=>u.username===b.dataset.username); if(user) openUserModal(user);
-      });
-      document.querySelectorAll('.delete-user').forEach(b => b.onclick = () => {
+      }));
+      document.querySelectorAll('.delete-user').forEach(b => b.addEventListener('click', () => {
         if(confirm('Delete user?')) { const updated = getUsers().filter(u=>u.username!==b.dataset.username); saveUsers(updated); logActivity('delete_user',b.dataset.username); renderUsers(); }
-      });
+      }));
     }
 
     function openUserModal(user=null) {
@@ -371,8 +392,8 @@
         <input type="password" id="u-pass" placeholder="New password (leave blank)">
         <div class="flex-row" style="justify-content:flex-end;"><button id="cancel-user">Cancel</button><button id="save-user" class="accent">Save</button></div></div>`;
       document.body.appendChild(modal);
-      document.getElementById('cancel-user').onclick = () => modal.remove();
-      document.getElementById('save-user').onclick = async () => {
+      document.getElementById('cancel-user').addEventListener('click', () => modal.remove());
+      document.getElementById('save-user').addEventListener('click', async () => {
         const username = document.getElementById('u-name').value.trim();
         const role = document.getElementById('u-role').value;
         const pass = document.getElementById('u-pass').value.trim();
@@ -386,7 +407,7 @@
           users.push({ username, password: await hashPassword(pass||DEFAULT_PASS), role, passwordChanged:false });
         }
         saveUsers(users); logActivity(user?'edit_user':'add_user', username); modal.remove(); renderUsers(); showToast('Saved');
-      };
+      });
     }
 
     function renderLogs() {
@@ -399,8 +420,14 @@
 
     // ── START ──
     (async ()=>{
-      await initData();
-      if(getCurrentUser()) { resetTimer(); renderMainApp(); } else renderLogin();
+      try {
+        await initData();
+        if(getCurrentUser()) { resetTimer(); renderMainApp(); } else renderLogin();
+      } catch(e) {
+        document.getElementById('error-banner').style.display = 'block';
+        document.getElementById('error-banner').textContent = 'Fatal error: ' + e.message;
+        console.error(e);
+      }
     })();
   })();
 </script>
