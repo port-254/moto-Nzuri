@@ -4,6 +4,10 @@ import pandas as pd
 import hashlib
 import secrets
 from datetime import datetime
+from reportlab.lib.pagesizes import A4, landscape
+from reportlab.lib import colors
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph
+from reportlab.lib.styles import getSampleStyleSheet
 
 # ---------------------------------------------------------------------
 # DATABASE SETUP
@@ -202,6 +206,42 @@ def seed_records(conn):
         data
     )
     conn.commit()  
+#################
+def generate_pdf(dataframe):
+    """Generate a PDF file from a DataFrame and return bytes."""
+    buffer = io.BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=landscape(A4), leftMargin=20, rightMargin=20, topMargin=20, bottomMargin=20)
+    elements = []
+    styles = getSampleStyleSheet()
+    title = Paragraph("moto nzuri ops. - Business Records", styles['Title'])
+    elements.append(title)
+
+    # Prepare data for table
+    header = list(dataframe.columns)
+    data = [header] + dataframe.values.tolist()
+
+    # Create table
+    table = Table(data, repeatRows=1)
+    table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+        ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 0), (-1, 0), 10),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 8),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+        ('GRID', (0, 0), (-1, -1), 0.5, colors.black),
+        ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+        ('FONTSIZE', (0, 1), (-1, -1), 8),
+        ('LEFTPADDING', (0, 0), (-1, -1), 4),
+        ('RIGHTPADDING', (0, 0), (-1, -1), 4),
+    ]))
+
+    elements.append(table)
+    doc.build(elements)
+    buffer.seek(0)
+    return buffer.getvalue()
+
 
 # ---------------------------------------------------------------------
 # SECURITY HELPERS
@@ -362,8 +402,8 @@ with st.sidebar:
                 st.rerun()
             else:
                 st.error("Invalid credentials")
-        st.caption("Admin: motoAdministrator / Admin@0912")
-        st.caption("User: usermoto / motoSana00")
+        st.caption("Hint: motoAdministrator")
+        st.caption("User Hint: usermoto")
 
 # ---------------- MAIN CONTENT ----------------
 if 'user' in st.session_state:
@@ -492,30 +532,35 @@ if 'user' in st.session_state:
             finally:
                 conn.close()
 
-        # Export PDF and WhatsApp
+        # Export buttons and WhatsApp
         st.divider()
-        col1, col2 = st.columns(2)
+        col1, col2, col3 = st.columns(3)
         with col1:
-            st.markdown("""
-                <button onclick="window.print()" style="padding:10px 20px; background:#2c3e50; color:white; border:none; border-radius:5px; cursor:pointer;">
-                    📄 Export PDF
-                </button>
-            """, unsafe_allow_html=True)
+            # CSV download
+            csv_data = df.to_csv(index=False).encode('utf-8-sig')
+            st.download_button(
+                label="📥 Download CSV",
+                data=csv_data,
+                file_name="moto_nzuri_records.csv",
+                mime="text/csv",
+                key="csv_download"
+            )
         with col2:
+            # PDF download
+            pdf_data = generate_pdf(df)
+            st.download_button(
+                label="📄 Download PDF",
+                data=pdf_data,
+                file_name="moto_nzuri_records.pdf",
+                mime="application/pdf",
+                key="pdf_download"
+            )
+        with col3:
+            # WhatsApp share
             wa_text = f"moto nzuri ops. - {search_query if search_query else 'Full list'}"
             wa_link = f"https://wa.me/254702250123?text={wa_text}"
             st.markdown(f'<a href="{wa_link}" target="_blank" style="text-decoration:none;"><button style="padding:10px 20px; background:#25D366; color:white; border:none; border-radius:5px; cursor:pointer;">📱 Share to WhatsApp</button></a>', unsafe_allow_html=True)
-
-    elif page == "Admin Dashboard" and user['role'] == 'admin':
-        st.title("Admin Dashboard")
-        st.subheader("Activity Logs")
-        logs = fetch_logs()
-        if logs:
-            logs_df = pd.DataFrame(logs)
-            st.dataframe(logs_df, use_container_width=True, hide_index=True)
-        else:
-            st.info("No logs yet.")
-
+    
     # Footer
     st.markdown("---")
     st.markdown("© innocent mwea moto nzuri intraweb")
